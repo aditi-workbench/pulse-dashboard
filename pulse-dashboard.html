@@ -4,14 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PULSE — Release Health Dashboard</title>
-  <meta name="description" content="Engineering release health monitoring — FleetVision Technologies Telematics" />
+  <meta name="description" content="Engineering release health monitoring — FleetVision Technologies" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-  <!-- Tailwind CSS CDN -->
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -23,9 +23,9 @@
           },
           colors: {
             brand: {
-              50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',
-              400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',
-              800:'#3730a3',900:'#312e81',950:'#1e1b4b',
+              50:'#eef2ff', 100:'#e0e7ff', 200:'#c7d2fe', 300:'#a5b4fc',
+              400:'#818cf8', 500:'#6366f1', 600:'#4f46e5', 700:'#4338ca',
+              800:'#3730a3', 900:'#312e81',
             },
           },
         },
@@ -33,54 +33,48 @@
     }
   </script>
 
-  <!-- React 18 -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- React 18 (pinned versions) -->
+  <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
 
-  <!-- React Router DOM v6 -->
-  <script src="https://unpkg.com/react-router-dom@6/dist/umd/react-router-dom.development.js"></script>
+  <!-- Recharts (pinned version, self-contained UMD) -->
+  <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
 
-  <!-- Recharts -->
-  <script src="https://unpkg.com/recharts@2/umd/Recharts.js"></script>
-
-  <!-- Babel (JSX in browser) -->
+  <!-- Babel standalone — allows JSX in a plain <script type="text/babel"> -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html { -webkit-font-smoothing: antialiased; }
-    body { font-family: 'Inter', system-ui, sans-serif; background: #f8fafc; }
+    body { margin: 0; font-family: 'Inter', system-ui, sans-serif; background: #f8fafc; }
 
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
 
     .pulse-sidebar {
       background: linear-gradient(180deg, #0a0f1e 0%, #0d1427 100%);
-      min-height: 100vh;
+      width: 256px; min-height: 100vh; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      border-right: 1px solid rgba(255,255,255,0.05);
     }
     .nav-item {
       display: flex; align-items: center; gap: 12px;
-      padding: 10px 12px; border-radius: 8px;
-      font-size: 13px; font-weight: 500;
-      color: #94a3b8; transition: all 150ms ease; cursor: pointer;
-      text-decoration: none;
+      padding: 10px 12px; border-radius: 8px; cursor: pointer;
+      font-size: 13px; font-weight: 500; color: #94a3b8;
+      transition: all 150ms; text-decoration: none; border: 1px solid transparent;
     }
     .nav-item:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
-    .nav-item.active {
-      background: rgba(99,102,241,0.2); color: #a5b4fc;
-      border: 1px solid rgba(99,102,241,0.2);
-    }
+    .nav-item.active { background: rgba(99,102,241,0.2); color: #a5b4fc; border-color: rgba(99,102,241,0.2); }
+
     .kpi-card {
-      background: white; border-radius: 12px;
+      background: white; border-radius: 12px; padding: 20px;
       border: 1px solid rgba(226,232,240,0.8);
-      padding: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
       transition: box-shadow 200ms;
     }
-    .kpi-card:hover {
-      box-shadow: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
-    }
+    .kpi-card:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.08); }
+
     .data-table { width: 100%; border-collapse: collapse; }
     .data-table th {
       font-size: 11px; font-weight: 600; color: #64748b;
@@ -90,35 +84,35 @@
     }
     .data-table td {
       padding: 14px 16px; font-size: 13px; color: #334155;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f1f5f9; vertical-align: middle;
     }
     .data-table tbody tr:last-child td { border-bottom: none; }
-    .data-table tbody tr { transition: background 100ms; }
+    .data-table tbody tr { transition: background 100ms; cursor: pointer; }
     .data-table tbody tr:hover td { background: #f8fafc; }
-    .data-table tbody tr.expanded-row td { background: #f0f4ff; }
-    .pulse-glow { box-shadow: 0 0 20px rgba(99,102,241,0.35); }
+    .data-table tbody tr.row-selected td { background: #eef2ff; }
+
     .badge {
-      display: inline-flex; align-items: center; gap: 6px;
+      display: inline-flex; align-items: center; gap: 5px;
       font-size: 11px; font-weight: 600;
-      padding: 4px 10px; border-radius: 9999px; border: 1px solid;
+      padding: 3px 10px; border-radius: 9999px; border: 1px solid;
     }
     .team-chip {
       display: inline-flex; align-items: center;
       font-size: 11px; font-weight: 500;
       padding: 2px 8px; border-radius: 9999px; border: 1px solid;
     }
-    .ticket-row:hover { background: rgba(248,250,252,0.8); }
-    .spinner {
-      width:14px;height:14px;border:2px solid #6366f1;
-      border-top-color:transparent;border-radius:50%;
-      animation: spin 0.7s linear infinite;
-    }
+    .pulse-glow { box-shadow: 0 0 20px rgba(99,102,241,0.35); }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .live-dot { animation: blink 2.5s ease-in-out infinite; }
+
     @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes pulse-ring {
-      0%,100%{opacity:1} 50%{opacity:0.4}
+    .spinner {
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid #6366f1; border-top-color: transparent;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
     }
-    .live-dot { animation: pulse-ring 2.5s ease-in-out infinite; }
-    .health-bar-segment { flex:1; }
   </style>
 </head>
 <body>
@@ -126,128 +120,91 @@
 
 <script type="text/babel">
 // ─── Globals ──────────────────────────────────────────────────────────────────
-const { useState, useEffect } = React;
-const {
-  HashRouter, Routes, Route, NavLink, useNavigate,
-  useLocation, useSearchParams, Navigate,
-} = ReactRouterDOM;
+const { useState, useEffect, useContext, createContext, useCallback, useRef } = React;
 const {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Legend, ReferenceLine, Cell,
+  ResponsiveContainer, Legend, Cell,
 } = Recharts;
 
-// ─── Feature Release Data ─────────────────────────────────────────────────────
-const featureReleases = [
-  {
-    id: 'FLT-001',
-    name: 'OTA Firmware Crash Fix (v3.1.2)',
-    description: 'Critical bug causing device brick during OTA update affecting 12% of deployed fleet devices. Firmware corruption in partition swap logic triggers a boot loop on units with fragmented NAND storage.',
-    category: 'Bug',
-    teams: ['Software', 'Quality'],
-    committedDate: '2026-02-28',
-    deliveredDate: '2026-03-15',
-    status: 'Delayed',
-    riskLevel: 'Critical',
-    riskReason: 'Quality team regression pipeline was overwhelmed by the severity of the issue, requiring full device fleet re-validation across 14 hardware SKUs. Delivered 15 days late.',
-    atRiskTeam: 'Quality',
-    progress: 100,
-    jiraEpic: 'FLEET-EP-01',
-  },
-  {
-    id: 'FLT-002',
-    name: 'Enhanced GPS Precision v2.5',
-    description: 'Sub-meter GPS accuracy upgrade requested by 78% of enterprise fleet customers. Requires new dual-band GNSS antenna hardware, RTKLIB-based correction algorithms, and field calibration protocol updates.',
-    category: 'Top Customer Feature Ask',
-    teams: ['Hardware', 'Software', 'Quality'],
-    committedDate: '2026-06-15',
-    status: 'Delayed',
-    riskLevel: 'High',
-    riskReason: 'Hardware team encountered a 6-week supply chain disruption for the u-blox M10 GNSS module (Sprints 3–5). Committed date was Jun 15; delivery now projected for Jul 10.',
-    atRiskTeam: 'Hardware',
-    progress: 82,
-    jiraEpic: 'FLEET-EP-02',
-  },
-  {
-    id: 'FLT-003',
-    name: 'CAN Bus Protocol Upgrade v3.2',
-    description: 'Mandatory upgrade from ISO 11898-2 to the extended J1939-21 protocol stack to maintain compatibility with next-gen OEM vehicle platforms and EU commercial vehicle compliance deadlines.',
-    category: 'KTLO',
-    teams: ['Hardware', 'Software'],
-    committedDate: '2026-07-31',
-    status: 'On Track',
-    riskLevel: 'Medium',
-    riskReason: 'Minor integration complexity discovered in Software Sprint 11 around message arbitration at high bus loads. Team self-identified the risk and added buffer stories. Currently tracking 1 sprint ahead of plan.',
-    progress: 58,
-    jiraEpic: 'FLEET-EP-03',
-  },
-  {
-    id: 'FLT-004',
-    name: 'Driver Behavior Analytics Dashboard',
-    description: 'Real-time driver scoring dashboard for fleet managers covering harsh braking, cornering, speeding, and idle time. Powered by edge ML inference on the telematics unit with a cloud aggregation API.',
-    category: 'Top Customer Feature Ask',
-    teams: ['Software', 'Quality'],
-    committedDate: '2026-07-15',
-    status: 'At Risk',
-    riskLevel: 'Medium',
-    riskReason: 'Quality team is at 65% velocity on driver analytics test cases due to dependency on a shared device lab needed for cellular failover testing simultaneously. Lab contention may slip delivery by 1–2 weeks.',
-    atRiskTeam: 'Quality',
-    progress: 72,
-    jiraEpic: 'FLEET-EP-04',
-  },
-  {
-    id: 'FLT-005',
-    name: 'Cellular Network Failover',
-    description: 'Automatic LTE-to-Wi-Fi-to-satellite failover for uninterrupted fleet tracking in cellular dead zones. Requires multi-SIM modem management, connection manager state machine overhaul, and Iridium SBD integration.',
-    category: 'Bug',
-    teams: ['Hardware', 'Software', 'Quality'],
-    committedDate: '2026-06-30',
-    status: 'At Risk',
-    riskLevel: 'High',
-    riskReason: 'Software team underestimated complexity of the connection manager state machine (Sprints 7–11). Technical debt in legacy modem abstraction layer required a full rewrite. Current sprint velocity at 63%.',
-    atRiskTeam: 'Software',
-    progress: 61,
-    jiraEpic: 'FLEET-EP-05',
-  },
-];
+// ─── Navigation (replaces React Router — no external dependency needed) ───────
+const NavCtx = createContext({ page: 'releases', sprintTeam: null, navigate: () => {} });
+function useNav() { return useContext(NavCtx); }
 
-// ─── Sprint Data Helper ───────────────────────────────────────────────────────
+// ─── Data helpers ─────────────────────────────────────────────────────────────
 const tk = (id, title, type, sp, status, assignee, fid) =>
   ({ id, title, type, storyPoints: sp, status, assignee, featureId: fid });
-
-const sp = (id, name, team, sd, ed, status, plan, done, co, bugs, blocked, vel, goal, fids, tickets = []) =>
+const mkSprint = (id, name, team, sd, ed, status, plan, done, co, bugs, blocked, vel, goal, fids, tickets = []) =>
   ({ id, name, team, startDate: sd, endDate: ed, status,
      plannedPoints: plan, completedPoints: done, carriedOver: co,
-     bugsFound: bugs, blockedCount: blocked, velocity: vel,
-     goal, featureIds: fids, tickets });
+     bugsFound: bugs, blockedCount: blocked, velocity: vel, goal, featureIds: fids, tickets });
 
-// ─── Hardware Sprints ─────────────────────────────────────────────────────────
-const hardwareSprints = [
-  sp('HW-S01','HW Sprint 1','Hardware','2026-01-05','2026-01-16','Completed',34,30,4,1,0,88,'Baseline GPS antenna design & modem bring-up',['FLT-002','FLT-003'],[]),
-  sp('HW-S02','HW Sprint 2','Hardware','2026-01-19','2026-01-30','Completed',36,33,3,2,0,92,'Dual-band GNSS PCB layout v1 & CAN PHY validation',['FLT-002','FLT-003'],[]),
-  sp('HW-S03','HW Sprint 3','Hardware','2026-02-02','2026-02-13','Completed',38,21,17,3,4,55,'GPS module sourcing & PCB layout v2 — supply chain crisis begins',['FLT-002','FLT-003','FLT-005'],[]),
-  sp('HW-S04','HW Sprint 4','Hardware','2026-02-16','2026-02-27','Completed',40,19,21,4,5,48,'Alternative GNSS vendor evaluation — supply chain crisis continues',['FLT-002','FLT-005'],[]),
-  sp('HW-S05','HW Sprint 5','Hardware','2026-03-02','2026-03-13','Completed',42,26,16,3,3,62,'u-blox M10 units received — resume GNSS PCB work',['FLT-002','FLT-005'],[]),
-  sp('HW-S06','HW Sprint 6','Hardware','2026-03-16','2026-03-27','Completed',38,29,9,2,1,76,'PCB prototype v1 fabrication & bring-up',['FLT-002','FLT-003','FLT-005'],[]),
-  sp('HW-S07','HW Sprint 7','Hardware','2026-03-30','2026-04-10','Completed',36,31,5,2,0,86,'PCB prototype validation & EMC compliance',['FLT-002','FLT-003'],[]),
-  sp('HW-S08','HW Sprint 8','Hardware','2026-04-13','2026-04-24','Completed',34,31,3,1,0,91,'Mass production readiness & CAN Bus hardware sign-off',['FLT-002','FLT-003','FLT-005'],[]),
-  sp('HW-S09','HW Sprint 9','Hardware','2026-04-27','2026-05-08','Completed',36,32,4,1,0,89,'GPS field calibration & satellite fail-over hardware testing',['FLT-002','FLT-005'],[]),
-  sp('HW-S10','HW Sprint 10','Hardware','2026-05-11','2026-05-22','Completed',34,31,3,1,0,91,'DVT hardware validation & production ramp support',['FLT-002','FLT-003'],[]),
-  sp('HW-S11','HW Sprint 11','Hardware','2026-05-25','2026-06-05','Completed',32,29,3,2,0,91,'Production validation & GPS software handoff support',['FLT-002','FLT-005'],[
+// ─── Feature Releases ─────────────────────────────────────────────────────────
+const RELEASES = [
+  { id:'FLT-001', name:'OTA Firmware Crash Fix (v3.1.2)',
+    description:'Critical bug causing device brick during OTA update affecting 12% of deployed fleet devices. Firmware corruption in partition swap logic triggers a boot loop on units with fragmented NAND storage.',
+    category:'Bug', teams:['Software','Quality'],
+    committedDate:'2026-02-28', deliveredDate:'2026-03-15',
+    status:'Delayed', riskLevel:'Critical',
+    riskReason:'Quality team regression pipeline was overwhelmed by the severity of the issue, requiring full device fleet re-validation across 14 hardware SKUs. Delivered 15 days late.',
+    atRiskTeam:'Quality', progress:100, jiraEpic:'FLEET-EP-01' },
+  { id:'FLT-002', name:'Enhanced GPS Precision v2.5',
+    description:'Sub-meter GPS accuracy upgrade requested by 78% of enterprise fleet customers. Requires new dual-band GNSS antenna hardware, RTKLIB-based correction algorithms, and field calibration protocol updates.',
+    category:'Top Customer Feature Ask', teams:['Hardware','Software','Quality'],
+    committedDate:'2026-06-15',
+    status:'Delayed', riskLevel:'High',
+    riskReason:'Hardware team encountered a 6-week supply chain disruption for the u-blox M10 GNSS module (Sprints 3–5). Committed date was Jun 15; delivery now projected for Jul 10.',
+    atRiskTeam:'Hardware', progress:82, jiraEpic:'FLEET-EP-02' },
+  { id:'FLT-003', name:'CAN Bus Protocol Upgrade v3.2',
+    description:'Mandatory upgrade from ISO 11898-2 to the extended J1939-21 protocol stack to maintain compatibility with next-gen OEM vehicle platforms and EU commercial vehicle compliance deadlines.',
+    category:'KTLO', teams:['Hardware','Software'],
+    committedDate:'2026-07-31',
+    status:'On Track', riskLevel:'Medium',
+    riskReason:'Minor integration complexity found in SW Sprint 11 around message arbitration at high bus loads. Team self-identified the risk and added buffer stories. Currently tracking 1 sprint ahead of plan.',
+    progress:58, jiraEpic:'FLEET-EP-03' },
+  { id:'FLT-004', name:'Driver Behavior Analytics Dashboard',
+    description:'Real-time driver scoring dashboard for fleet managers covering harsh braking, cornering, speeding, and idle time. Powered by edge ML inference on the telematics unit with a cloud aggregation API.',
+    category:'Top Customer Feature Ask', teams:['Software','Quality'],
+    committedDate:'2026-07-15',
+    status:'At Risk', riskLevel:'Medium',
+    riskReason:'Quality team is at 65% velocity on driver analytics test cases due to shared device lab contention with cellular failover testing. Lab scheduling may slip delivery by 1–2 weeks.',
+    atRiskTeam:'Quality', progress:72, jiraEpic:'FLEET-EP-04' },
+  { id:'FLT-005', name:'Cellular Network Failover',
+    description:'Automatic LTE-to-Wi-Fi-to-satellite failover for uninterrupted fleet tracking in cellular dead zones. Requires multi-SIM modem management, connection manager state machine overhaul, and Iridium SBD integration.',
+    category:'Bug', teams:['Hardware','Software','Quality'],
+    committedDate:'2026-06-30',
+    status:'At Risk', riskLevel:'High',
+    riskReason:'Software team underestimated complexity of the connection manager state machine (Sprints 7–11). Technical debt in legacy modem abstraction layer required a full rewrite. Current sprint velocity at 63%.',
+    atRiskTeam:'Software', progress:61, jiraEpic:'FLEET-EP-05' },
+];
+
+// ─── Sprint data ──────────────────────────────────────────────────────────────
+const HW_SPRINTS = [
+  mkSprint('HW-S01','HW Sprint 1','Hardware','2026-01-05','2026-01-16','Completed',34,30,4,1,0,88,'Baseline GPS antenna design & modem bring-up',['FLT-002','FLT-003']),
+  mkSprint('HW-S02','HW Sprint 2','Hardware','2026-01-19','2026-01-30','Completed',36,33,3,2,0,92,'Dual-band GNSS PCB layout v1 & CAN PHY validation',['FLT-002','FLT-003']),
+  mkSprint('HW-S03','HW Sprint 3','Hardware','2026-02-02','2026-02-13','Completed',38,21,17,3,4,55,'GPS module sourcing — supply chain crisis begins',['FLT-002','FLT-003']),
+  mkSprint('HW-S04','HW Sprint 4','Hardware','2026-02-16','2026-02-27','Completed',40,19,21,4,5,48,'Alternative GNSS vendor evaluation — crisis continues',['FLT-002']),
+  mkSprint('HW-S05','HW Sprint 5','Hardware','2026-03-02','2026-03-13','Completed',42,26,16,3,3,62,'u-blox M10 units received — resume GNSS PCB work',['FLT-002','FLT-005']),
+  mkSprint('HW-S06','HW Sprint 6','Hardware','2026-03-16','2026-03-27','Completed',38,29,9,2,1,76,'PCB prototype v1 fabrication & bring-up',['FLT-002','FLT-003']),
+  mkSprint('HW-S07','HW Sprint 7','Hardware','2026-03-30','2026-04-10','Completed',36,31,5,2,0,86,'PCB prototype validation & EMC compliance',['FLT-002','FLT-003']),
+  mkSprint('HW-S08','HW Sprint 8','Hardware','2026-04-13','2026-04-24','Completed',34,31,3,1,0,91,'Mass production readiness & CAN Bus hardware sign-off',['FLT-002','FLT-003']),
+  mkSprint('HW-S09','HW Sprint 9','Hardware','2026-04-27','2026-05-08','Completed',36,32,4,1,0,89,'GPS field calibration & satellite failover hardware test',['FLT-002','FLT-005']),
+  mkSprint('HW-S10','HW Sprint 10','Hardware','2026-05-11','2026-05-22','Completed',34,31,3,1,0,91,'DVT hardware validation & production ramp support',['FLT-002','FLT-003']),
+  mkSprint('HW-S11','HW Sprint 11','Hardware','2026-05-25','2026-06-05','Completed',32,29,3,2,0,91,'Production validation & GPS software handoff support',['FLT-002','FLT-005'],[
     tk('HW-101','Production validation test (PVT) execution','Story',13,'Done','Jennifer Park','FLT-002'),
     tk('HW-102','Satellite modem AT command set documentation','Task',5,'Done','Marcus Wong','FLT-005'),
     tk('HW-103','GPS accuracy final report — sub-meter achieved','Task',5,'Done','Sarah Chen','FLT-002'),
     tk('HW-104','Hardware SW interface spec handoff to Software team','Task',5,'Done','James Liu','FLT-002'),
     tk('HW-105','CAN bus ECU compatibility matrix update','Task',4,'In Progress','Alex Kim','FLT-003'),
   ]),
-  sp('HW-S12','HW Sprint 12','Hardware','2026-06-08','2026-06-19','Completed',30,26,4,2,1,87,'Production release closure & SW integration support',['FLT-002','FLT-003','FLT-005'],[
-    tk('HW-111','GPS software integration test support (SW team)','Task',5,'Done','Sarah Chen','FLT-002'),
+  mkSprint('HW-S12','HW Sprint 12','Hardware','2026-06-08','2026-06-19','Completed',30,26,4,2,1,87,'Production release closure & SW integration support',['FLT-002','FLT-003'],[
+    tk('HW-111','GPS software integration test support','Task',5,'Done','Sarah Chen','FLT-002'),
     tk('HW-112','Production hardware release documentation','Task',5,'Done','Jennifer Park','FLT-002'),
     tk('HW-113','Satellite modem firmware flash validation','Task',5,'Done','Marcus Wong','FLT-005'),
     tk('HW-114','CAN bus rev 3.2 hardware closure checklist','Task',5,'Done','Alex Kim','FLT-003'),
     tk('HW-115','GNSS module return merchandise authorization (2 defects)','Bug',5,'Blocked','James Liu','FLT-002'),
     tk('HW-116','Field upgrade guide for HW rev 2.5','Task',5,'In Progress','Jennifer Park','FLT-002'),
   ]),
-  sp('HW-S13','HW Sprint 13','Hardware','2026-06-22','2026-07-03','Active',30,11,0,1,1,37,'GPS release support & CAN bus pre-production closure',['FLT-002','FLT-003'],[
+  mkSprint('HW-S13','HW Sprint 13','Hardware','2026-06-22','2026-07-03','Active',30,11,0,1,1,37,'GPS release support & CAN bus pre-production closure',['FLT-002','FLT-003'],[
     tk('HW-121','Customer UAT support — GPS accuracy field visits','Story',8,'In Progress','Sarah Chen','FLT-002'),
     tk('HW-122','CAN bus J1939-71 vehicle-specific mapping','Story',8,'To Do','Alex Kim','FLT-003'),
     tk('HW-123','GPS module RMA investigation closure','Bug',5,'In Progress','James Liu','FLT-002'),
@@ -256,26 +213,25 @@ const hardwareSprints = [
   ]),
 ];
 
-// ─── Software Sprints ─────────────────────────────────────────────────────────
-const softwareSprints = [
-  sp('SW-S01','SW Sprint 1','Software','2026-01-05','2026-01-16','Completed',40,37,3,1,0,93,'OTA hotfix root cause & fix implementation',['FLT-001'],[]),
-  sp('SW-S02','SW Sprint 2','Software','2026-01-19','2026-01-30','Completed',42,37,5,2,0,88,'OTA fix validation build & GPS algorithm R&D',['FLT-001','FLT-002'],[]),
-  sp('SW-S03','SW Sprint 3','Software','2026-02-02','2026-02-13','Completed',40,36,4,2,0,90,'OTA fix QA handoff & GPS algorithm tuning',['FLT-001','FLT-002'],[]),
-  sp('SW-S04','SW Sprint 4','Software','2026-02-16','2026-02-27','Completed',42,37,5,1,0,88,'CAN bus protocol stack & GPS cloud pipeline',['FLT-002','FLT-003'],[]),
-  sp('SW-S05','SW Sprint 5','Software','2026-03-02','2026-03-13','Completed',40,28,12,4,2,70,'Cellular failover state machine — scoping revealed major complexity',['FLT-002','FLT-005'],[]),
-  sp('SW-S06','SW Sprint 6','Software','2026-03-16','2026-03-27','Completed',38,26,12,5,3,68,'Modem abstraction layer rewrite Phase 1',['FLT-003','FLT-005'],[]),
-  sp('SW-S07','SW Sprint 7','Software','2026-03-30','2026-04-10','Completed',40,27,13,6,3,68,'Modem abstraction layer rewrite Phase 2',['FLT-003','FLT-005'],[]),
-  sp('SW-S08','SW Sprint 8','Software','2026-04-13','2026-04-24','Completed',38,29,9,4,2,76,'Connection manager core & driver analytics MVP',['FLT-004','FLT-005'],[]),
-  sp('SW-S09','SW Sprint 9','Software','2026-04-27','2026-05-08','Completed',40,33,7,3,1,83,'Failover integration tests & driver analytics backend',['FLT-004','FLT-005'],[]),
-  sp('SW-S10','SW Sprint 10','Software','2026-05-11','2026-05-22','Completed',40,35,5,3,1,88,'Driver analytics UI & failover reliability hardening',['FLT-004','FLT-005'],[]),
-  sp('SW-S11','SW Sprint 11','Software','2026-05-25','2026-06-05','Completed',40,27,13,7,3,68,'Cellular failover edge cases — complexity spike resurfaces',['FLT-004','FLT-005'],[
+const SW_SPRINTS = [
+  mkSprint('SW-S01','SW Sprint 1','Software','2026-01-05','2026-01-16','Completed',40,37,3,1,0,93,'OTA hotfix root cause & fix implementation',['FLT-001']),
+  mkSprint('SW-S02','SW Sprint 2','Software','2026-01-19','2026-01-30','Completed',42,37,5,2,0,88,'OTA fix validation build & GPS algorithm R&D',['FLT-001','FLT-002']),
+  mkSprint('SW-S03','SW Sprint 3','Software','2026-02-02','2026-02-13','Completed',40,36,4,2,0,90,'OTA fix QA handoff & GPS algorithm tuning',['FLT-001','FLT-002']),
+  mkSprint('SW-S04','SW Sprint 4','Software','2026-02-16','2026-02-27','Completed',42,37,5,1,0,88,'CAN bus protocol stack & GPS cloud pipeline',['FLT-002','FLT-003']),
+  mkSprint('SW-S05','SW Sprint 5','Software','2026-03-02','2026-03-13','Completed',40,28,12,4,2,70,'Cellular failover state machine — scoping revealed major complexity',['FLT-002','FLT-005']),
+  mkSprint('SW-S06','SW Sprint 6','Software','2026-03-16','2026-03-27','Completed',38,26,12,5,3,68,'Modem abstraction layer rewrite Phase 1',['FLT-003','FLT-005']),
+  mkSprint('SW-S07','SW Sprint 7','Software','2026-03-30','2026-04-10','Completed',40,27,13,6,3,68,'Modem abstraction layer rewrite Phase 2',['FLT-003','FLT-005']),
+  mkSprint('SW-S08','SW Sprint 8','Software','2026-04-13','2026-04-24','Completed',38,29,9,4,2,76,'Connection manager core & driver analytics MVP',['FLT-004','FLT-005']),
+  mkSprint('SW-S09','SW Sprint 9','Software','2026-04-27','2026-05-08','Completed',40,33,7,3,1,83,'Failover integration tests & driver analytics backend',['FLT-004','FLT-005']),
+  mkSprint('SW-S10','SW Sprint 10','Software','2026-05-11','2026-05-22','Completed',40,35,5,3,1,88,'Driver analytics UI & failover reliability hardening',['FLT-004','FLT-005']),
+  mkSprint('SW-S11','SW Sprint 11','Software','2026-05-25','2026-06-05','Completed',40,27,13,7,3,68,'Cellular failover edge cases — complexity spike resurfaces',['FLT-004','FLT-005'],[
     tk('SW-101','Failover state machine race condition fix (3 bugs)','Bug',13,'In Progress','David Martinez','FLT-005'),
     tk('SW-102','Roaming SIM card APN auto-configuration','Story',8,'Blocked','Priya Patel','FLT-005'),
-    tk('SW-103','Driver analytics PDF export (WeasyPrint)','Story',8,'Done','Lisa Wang','FLT-004'),
+    tk('SW-103','Driver analytics PDF export','Story',8,'Done','Lisa Wang','FLT-004'),
     tk('SW-104','CAN gateway timeout handling','Bug',5,'Done','Tom Johnson','FLT-003'),
     tk('SW-105','Iridium SBD credit balance monitoring','Task',6,'Blocked','David Martinez','FLT-005'),
   ]),
-  sp('SW-S12','SW Sprint 12','Software','2026-06-08','2026-06-19','Completed',40,25,15,6,4,63,'Cellular failover end-to-end — blocked on modem APN regression',['FLT-004','FLT-005'],[
+  mkSprint('SW-S12','SW Sprint 12','Software','2026-06-08','2026-06-19','Completed',40,25,15,6,4,63,'Cellular failover end-to-end — blocked on APN regression',['FLT-004','FLT-005'],[
     tk('SW-111','APN auto-configuration regression fix','Bug',8,'In Progress','Priya Patel','FLT-005'),
     tk('SW-112','End-to-end failover QA test environment setup','Task',5,'Done','Tom Johnson','FLT-005'),
     tk('SW-113','Driver analytics coaching alerts push notification','Story',8,'Done','Lisa Wang','FLT-004'),
@@ -283,7 +239,7 @@ const softwareSprints = [
     tk('SW-115','Failover event telemetry to Datadog','Task',5,'Done','Tom Johnson','FLT-005'),
     tk('SW-116','Connection manager stress test (72h soak)','Task',6,'Blocked','David Martinez','FLT-005'),
   ]),
-  sp('SW-S13','SW Sprint 13','Software','2026-06-22','2026-07-03','Active',38,14,0,3,2,37,'CRITICAL: Cellular failover delivery sprint (Jun 30 deadline)',['FLT-005'],[
+  mkSprint('SW-S13','SW Sprint 13','Software','2026-06-22','2026-07-03','Active',38,14,0,3,2,37,'CRITICAL: Cellular failover delivery sprint (Jun 30 deadline)',['FLT-005'],[
     tk('SW-121','APN regression root cause fix + regression suite','Bug',13,'In Progress','Priya Patel','FLT-005'),
     tk('SW-122','Cellular dead zone detection final implementation','Story',8,'Blocked','David Martinez','FLT-005'),
     tk('SW-123','Failover connection manager v2 — final integration','Story',8,'In Progress','Tom Johnson','FLT-005'),
@@ -292,33 +248,32 @@ const softwareSprints = [
   ]),
 ];
 
-// ─── Quality Sprints ──────────────────────────────────────────────────────────
-const qualitySprints = [
-  sp('QA-S01','QA Sprint 1','Quality','2026-01-05','2026-01-16','Completed',30,26,4,2,0,87,'Q1 regression baseline & OTA pre-validation',['FLT-001'],[]),
-  sp('QA-S02','QA Sprint 2','Quality','2026-01-19','2026-01-30','Completed',32,28,4,3,0,88,'OTA canary expansion & regression test execution',['FLT-001'],[]),
-  sp('QA-S03','QA Sprint 3','Quality','2026-02-02','2026-02-13','Completed',32,13,19,14,6,41,'🚨 CRITICAL: OTA brick bug found in 12% of fleet — all hands regression',['FLT-001'],[]),
-  sp('QA-S04','QA Sprint 4','Quality','2026-02-16','2026-02-27','Completed',35,13,22,11,7,37,'OTA hotfix full regression on all 14 SKUs — sprint 2 of crisis',['FLT-001'],[]),
-  sp('QA-S05','QA Sprint 5','Quality','2026-03-02','2026-03-13','Completed',33,18,15,5,3,55,'OTA regression wrap-up & catch-up on backlog',['FLT-001'],[]),
-  sp('QA-S06','QA Sprint 6','Quality','2026-03-16','2026-03-27','Completed',30,22,8,3,1,73,'GPS field testing & test automation modernization',['FLT-002','FLT-003'],[]),
-  sp('QA-S07','QA Sprint 7','Quality','2026-03-30','2026-04-10','Completed',32,26,6,2,1,81,'GPS rural field testing & CAN protocol integration tests',['FLT-002','FLT-003'],[]),
-  sp('QA-S08','QA Sprint 8','Quality','2026-04-13','2026-04-24','Completed',34,30,4,2,0,88,'GPS DVT sign-off & CAN bus compliance validation',['FLT-002','FLT-003'],[]),
-  sp('QA-S09','QA Sprint 9','Quality','2026-04-27','2026-05-08','Completed',32,29,3,2,0,91,'Driver analytics test plan & cellular failover scoping',['FLT-004','FLT-005'],[]),
-  sp('QA-S10','QA Sprint 10','Quality','2026-05-11','2026-05-22','Completed',34,30,4,3,0,88,'Driver analytics full test execution & cellular failover test plan',['FLT-004','FLT-005'],[]),
-  sp('QA-S11','QA Sprint 11','Quality','2026-05-25','2026-06-05','Completed',34,30,4,3,1,88,'Cellular failover testing & driver analytics pre-release',['FLT-004','FLT-005'],[
+const QA_SPRINTS = [
+  mkSprint('QA-S01','QA Sprint 1','Quality','2026-01-05','2026-01-16','Completed',30,26,4,2,0,87,'Q1 regression baseline & OTA pre-validation',['FLT-001']),
+  mkSprint('QA-S02','QA Sprint 2','Quality','2026-01-19','2026-01-30','Completed',32,28,4,3,0,88,'OTA canary expansion & regression test execution',['FLT-001']),
+  mkSprint('QA-S03','QA Sprint 3','Quality','2026-02-02','2026-02-13','Completed',32,13,19,14,6,41,'🚨 CRITICAL: OTA brick bug — all hands regression across 14 SKUs',['FLT-001']),
+  mkSprint('QA-S04','QA Sprint 4','Quality','2026-02-16','2026-02-27','Completed',35,13,22,11,7,37,'OTA hotfix full regression — sprint 2 of crisis',['FLT-001']),
+  mkSprint('QA-S05','QA Sprint 5','Quality','2026-03-02','2026-03-13','Completed',33,18,15,5,3,55,'OTA regression wrap-up & backlog catch-up',['FLT-001']),
+  mkSprint('QA-S06','QA Sprint 6','Quality','2026-03-16','2026-03-27','Completed',30,22,8,3,1,73,'GPS field testing & test automation modernization',['FLT-002','FLT-003']),
+  mkSprint('QA-S07','QA Sprint 7','Quality','2026-03-30','2026-04-10','Completed',32,26,6,2,1,81,'GPS rural field testing & CAN protocol integration tests',['FLT-002','FLT-003']),
+  mkSprint('QA-S08','QA Sprint 8','Quality','2026-04-13','2026-04-24','Completed',34,30,4,2,0,88,'GPS DVT sign-off & CAN bus compliance validation',['FLT-002','FLT-003']),
+  mkSprint('QA-S09','QA Sprint 9','Quality','2026-04-27','2026-05-08','Completed',32,29,3,2,0,91,'Driver analytics test plan & cellular failover scoping',['FLT-004','FLT-005']),
+  mkSprint('QA-S10','QA Sprint 10','Quality','2026-05-11','2026-05-22','Completed',34,30,4,3,0,88,'Driver analytics full test execution & failover test plan',['FLT-004','FLT-005']),
+  mkSprint('QA-S11','QA Sprint 11','Quality','2026-05-25','2026-06-05','Completed',34,30,4,3,1,88,'Cellular failover testing & driver analytics pre-release',['FLT-004','FLT-005'],[
     tk('QA-101','LTE → Satellite failover test execution (15 scenarios)','Story',13,'Done','Emily Chen','FLT-005'),
     tk('QA-102','Driver analytics pre-release acceptance sign-off','Task',8,'Done','Rachel Green','FLT-004'),
     tk('QA-103','Failover latency measurement across carriers','Task',5,'Done','Kevin Brown','FLT-005'),
     tk('QA-104','Push notification accuracy test (100 alerts)','Task',4,'Done','Rachel Green','FLT-004'),
     tk('QA-105','Cellular failover regression on LTE network drop','Story',4,'Blocked','Emily Chen','FLT-005'),
   ]),
-  sp('QA-S12','QA Sprint 12','Quality','2026-06-08','2026-06-19','Completed',34,23,11,5,3,68,'Lab contention: driver analytics vs cellular failover testing',['FLT-004','FLT-005'],[
+  mkSprint('QA-S12','QA Sprint 12','Quality','2026-06-08','2026-06-19','Completed',34,23,11,5,3,68,'Lab contention: driver analytics vs cellular failover testing',['FLT-004','FLT-005'],[
     tk('QA-111','Cellular failover 72h soak test (lab occupied)','Story',13,'Blocked','Emily Chen','FLT-005'),
     tk('QA-112','Driver analytics coaching alert regression','Task',5,'Done','Rachel Green','FLT-004'),
     tk('QA-113','Cellular APN regression test (SW team bug)','Bug',8,'Blocked','Kevin Brown','FLT-005'),
     tk('QA-114','Driver analytics load test — 10K concurrent users','Task',5,'Done','Rachel Green','FLT-004'),
     tk('QA-115','Device lab scheduler conflict resolution','Task',3,'Done','Emily Chen','FLT-005'),
   ]),
-  sp('QA-S13','QA Sprint 13','Quality','2026-06-22','2026-07-03','Active',32,10,0,2,2,31,'Cellular failover end-to-end & driver analytics final QA',['FLT-004','FLT-005'],[
+  mkSprint('QA-S13','QA Sprint 13','Quality','2026-06-22','2026-07-03','Active',32,10,0,2,2,31,'Cellular failover end-to-end & driver analytics final QA',['FLT-004','FLT-005'],[
     tk('QA-121','Cellular failover end-to-end test (all 35 scenarios)','Story',13,'Blocked','Emily Chen','FLT-005'),
     tk('QA-122','GPS accuracy regression test (post SW handoff)','Task',5,'Done','Kevin Brown','FLT-002'),
     tk('QA-123','OTA stress test on cellular failover firmware','Story',8,'Blocked','Rachel Green','FLT-005'),
@@ -328,371 +283,335 @@ const qualitySprints = [
   ]),
 ];
 
-const TEAM_SPRINTS = { Hardware: hardwareSprints, Software: softwareSprints, Quality: qualitySprints };
+const TEAM_SPRINTS = { Hardware: HW_SPRINTS, Software: SW_SPRINTS, Quality: QA_SPRINTS };
 
-// ─── SVG Icon Components ──────────────────────────────────────────────────────
-const svgProps = (size, strokeWidth, className) => ({
-  width: size, height: size, viewBox: '0 0 24 24',
-  fill: 'none', stroke: 'currentColor',
-  strokeWidth, strokeLinecap: 'round', strokeLinejoin: 'round',
-  className,
-});
-
-const ActivityIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>;
-const LayoutDashIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>;
-const BarChart3Icon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>;
-const ChevronRightIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><path d="m9 18 6-6-6-6"/></svg>;
-const AlertTriangleIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>;
-const CheckCircle2Icon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>;
-const ClockIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
-const XCircleIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>;
-const BugIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><path d="m8 2 1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M6 13H2"/><path d="M3 21c0-2.1 1.7-3.9 4-4"/><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/><path d="M22 13h-4"/><path d="M17 17c2.3.1 4 1.9 4 4"/></svg>;
-const StarIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>;
-const WrenchIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>;
-const InfoIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>;
-const UsersIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
-const CalendarIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M8 18h.01"/></svg>;
-const TrendingUpIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>;
-const TrendingDownIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>;
-const FilterIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>;
-const CpuIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>;
-const Code2Icon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>;
-const FlaskIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>;
-const AlertCircleIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>;
-const ArrowLeftIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>;
-const ZapIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>;
-const TargetIcon = ({ size=16, sw=2, cls='' }) => <svg {...svgProps(size,sw,cls)}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>;
-
-// ─── Badge components ─────────────────────────────────────────────────────────
-function RiskBadge({ level }) {
-  const map = {
-    Critical: { cls: 'bg-red-50 text-red-700 border-red-200', dot: 'bg-red-500', pulse: true },
-    High:     { cls: 'bg-orange-50 text-orange-700 border-orange-200', dot: 'bg-orange-500' },
-    Medium:   { cls: 'bg-amber-50 text-amber-700 border-amber-200', dot: 'bg-amber-400' },
-    Low:      { cls: 'bg-emerald-50 text-emerald-700 border-emerald-200', dot: 'bg-emerald-500' },
-  };
-  const { cls, dot, pulse } = map[level] || map.Low;
+// ─── SVG icons (inline — no lucide-react needed) ──────────────────────────────
+function Ico({ d, size = 16, sw = 2, cls = '', children }) {
   return (
-    <span className={`badge ${cls}`}>
-      <span className={`w-1.5 h-1.5 rounded-full inline-block ${dot}${pulse ? ' live-dot' : ''}`} />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth={sw} strokeLinecap="round"
+      strokeLinejoin="round" className={cls}>
+      {children}
+    </svg>
+  );
+}
+const ActivityIco = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></Ico>;
+const DashIco     = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></Ico>;
+const BarIco      = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></Ico>;
+const ChevIco     = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><path d="m9 18 6-6-6-6"/></Ico>;
+const WarnIco     = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></Ico>;
+const CheckIco    = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></Ico>;
+const ClockIco    = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></Ico>;
+const XCircIco    = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></Ico>;
+const BugIco      = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><path d="m8 2 1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M6 13H2"/><path d="M3 21c0-2.1 1.7-3.9 4-4"/><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/><path d="M22 13h-4"/><path d="M17 17c2.3.1 4 1.9 4 4"/></Ico>;
+const StarIco     = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></Ico>;
+const WrenchIco   = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></Ico>;
+const InfoIco     = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></Ico>;
+const UsersIco    = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></Ico>;
+const CalIco      = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M8 18h.01"/></Ico>;
+const UpIco       = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></Ico>;
+const DownIco     = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></Ico>;
+const FilterIco   = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></Ico>;
+const CpuIco      = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></Ico>;
+const CodeIco     = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></Ico>;
+const FlaskIco    = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></Ico>;
+const AlertCIco   = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></Ico>;
+const BackIco     = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></Ico>;
+const ZapIco      = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></Ico>;
+const TargetIco   = ({ size=16, sw=2, cls='' }) => <Ico size={size} sw={sw} cls={cls}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></Ico>;
+
+// ─── Shared small components ──────────────────────────────────────────────────
+function RiskBadge({ level }) {
+  const cfg = {
+    Critical: { bg:'#fef2f2', color:'#b91c1c', border:'#fecaca', dot:'#ef4444', pulse:true },
+    High:     { bg:'#fff7ed', color:'#c2410c', border:'#fed7aa', dot:'#f97316' },
+    Medium:   { bg:'#fffbeb', color:'#92400e', border:'#fde68a', dot:'#f59e0b' },
+    Low:      { bg:'#f0fdf4', color:'#15803d', border:'#bbf7d0', dot:'#22c55e' },
+  }[level] || {};
+  return (
+    <span className="badge" style={{ background:cfg.bg, color:cfg.color, borderColor:cfg.border }}>
+      <span className={cfg.pulse ? 'live-dot' : ''} style={{ width:6,height:6,borderRadius:'50%',background:cfg.dot,display:'inline-block',flexShrink:0 }} />
       {level}
     </span>
   );
 }
 
 function StatusBadge({ status }) {
-  const map = {
-    'On Track': { cls: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: <CheckCircle2Icon size={12}/> },
-    'At Risk':  { cls: 'bg-orange-50 text-orange-700 border-orange-200',   icon: <AlertTriangleIcon size={12}/> },
-    'Delayed':  { cls: 'bg-red-50 text-red-700 border-red-200',            icon: <XCircleIcon size={12}/> },
-  };
-  const { cls, icon } = map[status] || map['On Track'];
-  return <span className={`badge ${cls}`}>{icon}{status}</span>;
+  const cfg = {
+    'On Track': { bg:'#f0fdf4', color:'#15803d', border:'#bbf7d0', icon:<CheckIco size={12}/> },
+    'At Risk':  { bg:'#fff7ed', color:'#c2410c', border:'#fed7aa', icon:<WarnIco size={12}/> },
+    'Delayed':  { bg:'#fef2f2', color:'#b91c1c', border:'#fecaca', icon:<XCircIco size={12}/> },
+  }[status] || {};
+  return (
+    <span className="badge" style={{ background:cfg.bg, color:cfg.color, borderColor:cfg.border }}>
+      {cfg.icon}{status}
+    </span>
+  );
 }
 
-function CategoryBadge({ category }) {
-  const map = {
-    'Bug':                      { cls: 'bg-red-50 text-red-600 border-red-200',       icon: <BugIcon size={11}/>,    label: 'Bug' },
-    'Top Customer Feature Ask': { cls: 'bg-blue-50 text-blue-700 border-blue-200',    icon: <StarIcon size={11}/>,   label: 'Customer Feature' },
-    'KTLO':                     { cls: 'bg-violet-50 text-violet-700 border-violet-200', icon: <WrenchIcon size={11}/>, label: 'KTLO' },
-  };
-  const { cls, icon, label } = map[category] || {};
-  return <span className={`badge ${cls}`}>{icon}{label}</span>;
+function CatBadge({ cat }) {
+  const cfg = {
+    'Bug':                      { bg:'#fef2f2', color:'#dc2626', border:'#fecaca', icon:<BugIco size={11}/>,    label:'Bug' },
+    'Top Customer Feature Ask': { bg:'#eff6ff', color:'#1d4ed8', border:'#bfdbfe', icon:<StarIco size={11}/>,   label:'Customer Feature' },
+    'KTLO':                     { bg:'#f5f3ff', color:'#6d28d9', border:'#ddd6fe', icon:<WrenchIco size={11}/>, label:'KTLO' },
+  }[cat] || {};
+  return (
+    <span className="badge" style={{ background:cfg.bg, color:cfg.color, borderColor:cfg.border }}>
+      {cfg.icon}{cfg.label}
+    </span>
+  );
 }
 
 function TeamChip({ team }) {
-  const map = {
-    Hardware: 'bg-cyan-50 text-cyan-700 border-cyan-200',
-    Software: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-    Quality:  'bg-purple-50 text-purple-700 border-purple-200',
-  };
-  return <span className={`team-chip ${map[team] || ''}`}>{team}</span>;
+  const s = {
+    Hardware: { bg:'#ecfeff', color:'#0e7490', border:'#a5f3fc' },
+    Software: { bg:'#eef2ff', color:'#4338ca', border:'#c7d2fe' },
+    Quality:  { bg:'#f5f3ff', color:'#7c3aed', border:'#ddd6fe' },
+  }[team] || {};
+  return <span className="team-chip" style={{ background:s.bg, color:s.color, borderColor:s.border }}>{team}</span>;
 }
 
 function ProgressBar({ value }) {
-  const color = value === 100 ? 'bg-emerald-500' : value >= 70 ? 'bg-indigo-500' : value >= 40 ? 'bg-amber-400' : 'bg-red-400';
+  const fill = value===100?'#22c55e':value>=70?'#6366f1':value>=40?'#f59e0b':'#ef4444';
   return (
-    <div style={{ display:'flex', alignItems:'center', gap:'8px', minWidth:'100px' }}>
-      <div style={{ flex:1, height:'6px', borderRadius:'9999px', background:'#f1f5f9', overflow:'hidden' }}>
-        <div className={color} style={{ height:'100%', width:`${value}%`, borderRadius:'9999px', transition:'width 500ms' }} />
+    <div style={{ display:'flex', alignItems:'center', gap:8, minWidth:100 }}>
+      <div style={{ flex:1, height:6, borderRadius:9999, background:'#f1f5f9', overflow:'hidden' }}>
+        <div style={{ height:'100%', borderRadius:9999, background:fill, width:`${value}%`, transition:'width 500ms' }} />
       </div>
-      <span style={{ fontSize:'11px', fontFamily:'JetBrains Mono,monospace', color:'#64748b', width:'28px', textAlign:'right' }}>{value}%</span>
+      <span style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace', color:'#64748b', width:28, textAlign:'right' }}>{value}%</span>
     </div>
   );
 }
 
-function TicketStatusPill({ status }) {
-  const map = {
-    'Done':        'background:#d1fae5;color:#065f46',
-    'In Progress': 'background:#dbeafe;color:#1e40af',
-    'To Do':       'background:#f1f5f9;color:#475569',
-    'Blocked':     'background:#fee2e2;color:#991b1b',
-  };
-  return (
-    <span style={{ fontSize:'10px', fontWeight:600, padding:'2px 8px', borderRadius:'9999px', display:'inline-block', ...Object.fromEntries((map[status]||'').split(';').map(s=>s.split(':').map(p=>p.trim())).filter(p=>p.length===2)) }}>
-      {status}
-    </span>
-  );
+function StatusPill({ status }) {
+  const s = {
+    'Done':        '#d1fae5:#065f46',
+    'In Progress': '#dbeafe:#1e40af',
+    'To Do':       '#f1f5f9:#475569',
+    'Blocked':     '#fee2e2:#991b1b',
+  }[status] || '#f1f5f9:#475569';
+  const [bg, color] = s.split(':');
+  return <span style={{ fontSize:10,fontWeight:600,padding:'2px 8px',borderRadius:9999,background:bg,color,display:'inline-block' }}>{status}</span>;
 }
 
-function TicketTypePill({ type }) {
-  const map = {
-    Story: { bg:'#f0fdf4', color:'#15803d', border:'#bbf7d0' },
-    Bug:   { bg:'#fef2f2', color:'#dc2626', border:'#fecaca' },
-    Task:  { bg:'#f8fafc', color:'#475569', border:'#e2e8f0' },
-  };
-  const s = map[type] || map.Task;
-  return (
-    <span style={{ fontSize:'10px', fontWeight:500, padding:'2px 6px', borderRadius:'4px', border:`1px solid ${s.border}`, background:s.bg, color:s.color, display:'inline-block' }}>
-      {type}
-    </span>
-  );
+function TypePill({ type }) {
+  const s = { Story:['#f0fdf4','#15803d','#bbf7d0'], Bug:['#fef2f2','#dc2626','#fecaca'], Task:['#f8fafc','#475569','#e2e8f0'] }[type] || ['#f8fafc','#475569','#e2e8f0'];
+  return <span style={{ fontSize:10,fontWeight:500,padding:'2px 6px',borderRadius:4,background:s[0],color:s[1],border:`1px solid ${s[2]}`,display:'inline-block' }}>{type}</span>;
 }
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 function Sidebar() {
-  const location = useLocation();
+  const { page, navigate } = useNav();
   const items = [
-    { label:'Feature Releases', path:'/', icon:<LayoutDashIcon size={16} sw={1.75}/>, desc:'Release health & risk', exact:true },
-    { label:'Sprint Metrics',   path:'/sprints', icon:<BarChart3Icon size={16} sw={1.75}/>, desc:'Team velocity & JIRA', exact:false },
+    { id:'releases', label:'Feature Releases', desc:'Release health & risk',   icon:<DashIco size={16} sw={1.75}/> },
+    { id:'sprints',  label:'Sprint Metrics',   desc:'Team velocity & JIRA',    icon:<BarIco  size={16} sw={1.75}/> },
   ];
   return (
-    <aside className="pulse-sidebar" style={{ width:'256px', display:'flex', flexDirection:'column', borderRight:'1px solid rgba(255,255,255,0.05)', flexShrink:0 }}>
-      {/* Brand */}
+    <aside className="pulse-sidebar">
       <div style={{ padding:'24px 20px 20px', borderBottom:'1px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-          <div className="pulse-glow" style={{ position:'relative', width:'36px', height:'36px', borderRadius:'8px', background:'#4f46e5', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-            <ActivityIcon size={20} sw={2.5} cls="text-white" />
-            <span className="live-dot" style={{ position:'absolute', top:'-2px', right:'-2px', width:'8px', height:'8px', borderRadius:'50%', background:'#34d399', border:'2px solid #0a0f1e' }} />
+        <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+          <div className="pulse-glow" style={{ position:'relative', width:36, height:36, borderRadius:8, background:'#4f46e5', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+            <ActivityIco size={20} sw={2.5} cls="text-white" />
+            <span className="live-dot" style={{ position:'absolute', top:-2, right:-2, width:8, height:8, borderRadius:'50%', background:'#34d399', border:'2px solid #0a0f1e' }} />
           </div>
           <div>
-            <div style={{ fontSize:'15px', fontWeight:800, letterSpacing:'-0.02em', color:'white', lineHeight:1 }}>PULSE</div>
-            <div style={{ fontSize:'10px', fontWeight:500, color:'#475569', letterSpacing:'0.1em', textTransform:'uppercase', marginTop:'3px' }}>Release Monitor</div>
+            <div style={{ fontSize:15, fontWeight:800, letterSpacing:'-0.02em', color:'white', lineHeight:1 }}>PULSE</div>
+            <div style={{ fontSize:10, fontWeight:500, color:'#475569', letterSpacing:'0.1em', textTransform:'uppercase', marginTop:3 }}>Release Monitor</div>
           </div>
         </div>
-        <div style={{ marginTop:'16px', padding:'10px 12px', borderRadius:'8px', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.06)' }}>
-          <div style={{ fontSize:'10px', fontWeight:600, color:'#475569', textTransform:'uppercase', letterSpacing:'0.08em' }}>Company</div>
-          <div style={{ fontSize:'12px', fontWeight:500, color:'#cbd5e1', marginTop:'2px' }}>FleetVision Technologies</div>
-          <div style={{ fontSize:'10px', color:'#334155', marginTop:'2px' }}>Telematics Division</div>
+        <div style={{ marginTop:16, padding:'10px 12px', borderRadius:8, background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ fontSize:10, fontWeight:600, color:'#475569', textTransform:'uppercase', letterSpacing:'0.08em' }}>Company</div>
+          <div style={{ fontSize:12, fontWeight:500, color:'#cbd5e1', marginTop:2 }}>FleetVision Technologies</div>
+          <div style={{ fontSize:10, color:'#334155', marginTop:2 }}>Telematics Division</div>
         </div>
       </div>
 
-      {/* Nav */}
-      <nav style={{ flex:1, padding:'16px 12px', display:'flex', flexDirection:'column', gap:'4px' }}>
-        <div style={{ padding:'0 12px', marginBottom:'8px', fontSize:'10px', fontWeight:600, color:'#334155', textTransform:'uppercase', letterSpacing:'0.1em' }}>Navigation</div>
-        {items.map(({ label, path, icon, desc, exact }) => {
-          const active = exact ? location.pathname === path || (location.pathname === '' && path === '/') : location.pathname.startsWith(path);
-          return (
-            <NavLink key={path} to={path} className={`nav-item${active ? ' active' : ''}`} style={{ textDecoration:'none' }}>
-              <span style={{ flexShrink:0 }}>{icon}</span>
-              <div style={{ flex:1, minWidth:0 }}>
-                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-                  <span>{label}</span>
-                  <ChevronRightIcon size={12} cls={active ? '' : ''} />
-                </div>
-                <div style={{ fontSize:'10px', marginTop:'2px', color: active ? 'rgba(165,180,252,0.7)' : '#334155' }}>{desc}</div>
+      <nav style={{ flex:1, padding:'16px 12px', display:'flex', flexDirection:'column', gap:4 }}>
+        <div style={{ padding:'0 12px', marginBottom:8, fontSize:10, fontWeight:600, color:'#334155', textTransform:'uppercase', letterSpacing:'0.1em' }}>Navigation</div>
+        {items.map(item => (
+          <div key={item.id} className={`nav-item${page===item.id?' active':''}`} onClick={() => navigate(item.id)}>
+            <span style={{ flexShrink:0 }}>{item.icon}</span>
+            <div style={{ flex:1 }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                <span>{item.label}</span>
+                <ChevIco size={11} />
               </div>
-            </NavLink>
-          );
-        })}
+              <div style={{ fontSize:10, marginTop:2, color: page===item.id ? 'rgba(165,180,252,0.7)' : '#334155' }}>{item.desc}</div>
+            </div>
+          </div>
+        ))}
       </nav>
 
-      {/* Footer */}
       <div style={{ padding:'16px 20px', borderTop:'1px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:'8px', marginBottom:'8px' }}>
-          <span style={{ width:'6px', height:'6px', borderRadius:'50%', background:'#34d399', display:'inline-block' }} />
-          <span style={{ fontSize:'11px', color:'#475569' }}>Live · Updated just now</span>
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
+          <span style={{ width:6, height:6, borderRadius:'50%', background:'#34d399', display:'inline-block' }} />
+          <span style={{ fontSize:11, color:'#475569' }}>Live · Updated just now</span>
         </div>
-        <div style={{ fontSize:'10px', color:'#374151', lineHeight:'1.5' }}>Data: Jan – Jun 2026 · Q1–Q2 Engineering</div>
-        <div style={{ fontSize:'10px', color:'#374151', marginTop:'2px' }}>v1.0.0</div>
+        <div style={{ fontSize:10, color:'#374151', lineHeight:1.5 }}>Data: Jan – Jun 2026 · Q1–Q2</div>
+        <div style={{ fontSize:10, color:'#374151', marginTop:2 }}>v1.0.0</div>
       </div>
     </aside>
   );
 }
 
-// ─── Layout ───────────────────────────────────────────────────────────────────
-function Layout() {
-  const location = useLocation();
-  return (
-    <div style={{ display:'flex', minHeight:'100vh', background:'#f8fafc' }}>
-      <Sidebar />
-      <main style={{ flex:1, overflow:'auto' }}>
-        {location.pathname === '/' || location.pathname === '' ? <FeatureReleasePage /> : <SprintMetricsPage />}
-      </main>
-    </div>
-  );
-}
-
 // ─── Feature Release Page ─────────────────────────────────────────────────────
 function FeatureReleasePage() {
-  const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState('All');
-  const [expandedRow, setExpandedRow] = useState(null);
+  const { navigate } = useNav();
+  const [catFilter, setCatFilter] = useState('All');
+  const [expandedId, setExpandedId] = useState(null);
 
-  const categories = ['All', 'Bug', 'Top Customer Feature Ask', 'KTLO'];
-  const catLabel = { 'Top Customer Feature Ask': 'Customer Feature', Bug: 'Bug', KTLO: 'KTLO', All: 'All' };
+  const cats = ['All', 'Bug', 'Top Customer Feature Ask', 'KTLO'];
+  const catLabel = { 'Top Customer Feature Ask':'Customer Feature', Bug:'Bug', KTLO:'KTLO', All:'All' };
+  const filtered = catFilter === 'All' ? RELEASES : RELEASES.filter(r => r.category === catFilter);
 
-  const filtered = activeCategory === 'All' ? featureReleases : featureReleases.filter(f => f.category === activeCategory);
-  const kpis = {
-    total:   featureReleases.length,
-    onTrack: featureReleases.filter(f => f.status === 'On Track').length,
-    atRisk:  featureReleases.filter(f => f.status === 'At Risk').length,
-    delayed: featureReleases.filter(f => f.status === 'Delayed').length,
-  };
+  const total    = RELEASES.length;
+  const onTrack  = RELEASES.filter(r => r.status === 'On Track').length;
+  const atRisk   = RELEASES.filter(r => r.status === 'At Risk').length;
+  const delayed  = RELEASES.filter(r => r.status === 'Delayed').length;
 
-  const fmtDate = iso => new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
-  const isOverdue = iso => new Date(iso) < new Date('2026-06-28');
+  const fmt = iso => new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  const past = iso => new Date(iso) < new Date('2026-06-28');
+
+  const kpis = [
+    { label:'Total Releases',  val:total,   sub:'Jan – Jun 2026',        textColor:'#0f172a', bgColor:'#f8fafc', icon:<UpIco   size={16}/> },
+    { label:'On Track',        val:onTrack, sub:'Meeting committed dates', textColor:'#15803d', bgColor:'#f0fdf4', icon:<CheckIco size={16}/> },
+    { label:'At Risk',         val:atRisk,  sub:'May slip target date',    textColor:'#c2410c', bgColor:'#fff7ed', icon:<WarnIco  size={16}/> },
+    { label:'Delayed',         val:delayed, sub:'Past committed date',     textColor:'#b91c1c', bgColor:'#fef2f2', icon:<XCircIco size={16}/> },
+  ];
 
   return (
     <div style={{ minHeight:'100vh', background:'#f8fafc' }}>
       {/* Header */}
-      <div style={{ background:'white', borderBottom:'1px solid #e2e8f0', padding:'20px 32px' }}>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-            <div style={{ padding:'8px', borderRadius:'8px', background:'#eef2ff', border:'1px solid #e0e7ff' }}>
-              <ActivityIcon size={20} cls="text-indigo-600" />
-            </div>
-            <div>
-              <h2 style={{ fontSize:'20px', fontWeight:700, color:'#0f172a', letterSpacing:'-0.02em', margin:0 }}>Feature Release Health</h2>
-              <p style={{ fontSize:'13px', color:'#64748b', margin:'2px 0 0' }}>Q1–Q2 2026 · FleetVision Telematics · 3 Engineering Teams</p>
-            </div>
+      <div style={{ background:'white', borderBottom:'1px solid #e2e8f0', padding:'20px 32px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+          <div style={{ padding:8, borderRadius:8, background:'#eef2ff', border:'1px solid #e0e7ff' }}>
+            <ActivityIco size={20} cls="text-indigo-600" />
           </div>
-          <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', color:'#64748b', background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:'8px', padding:'8px 12px' }}>
-            <ClockIcon size={13} /> As of June 28, 2026
+          <div>
+            <h2 style={{ margin:0, fontSize:20, fontWeight:700, color:'#0f172a', letterSpacing:'-0.02em' }}>Feature Release Health</h2>
+            <p style={{ margin:'2px 0 0', fontSize:13, color:'#64748b' }}>Q1–Q2 2026 · FleetVision Telematics · 3 Engineering Teams</p>
           </div>
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, color:'#64748b', background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:8, padding:'8px 12px' }}>
+          <ClockIco size={13} /> As of June 28, 2026
         </div>
       </div>
 
-      <div style={{ padding:'24px 32px', display:'flex', flexDirection:'column', gap:'24px' }}>
-        {/* KPI Cards */}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'16px' }}>
-          {[
-            { label:'Total Releases', val:kpis.total, sub:'Jan – Jun 2026', color:'#0f172a', bg:'#f8fafc', icon:<TrendingUpIcon size={16} cls="text-slate-600"/> },
-            { label:'On Track', val:kpis.onTrack, sub:'Meeting committed dates', color:'#15803d', bg:'#f0fdf4', icon:<CheckCircle2Icon size={16} cls="text-emerald-600"/> },
-            { label:'At Risk', val:kpis.atRisk, sub:'May slip target date', color:'#c2410c', bg:'#fff7ed', icon:<AlertTriangleIcon size={16} cls="text-orange-600"/> },
-            { label:'Delayed', val:kpis.delayed, sub:'Past committed date', color:'#dc2626', bg:'#fef2f2', icon:<XCircleIcon size={16} cls="text-red-600"/> },
-          ].map(({ label, val, sub, color, bg, icon }) => (
+      <div style={{ padding:'24px 32px', display:'flex', flexDirection:'column', gap:24 }}>
+        {/* KPI cards */}
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }}>
+          {kpis.map(({ label, val, sub, textColor, bgColor, icon }) => (
             <div key={label} className="kpi-card">
               <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between' }}>
                 <div>
-                  <p style={{ fontSize:'11px', fontWeight:600, color, textTransform:'uppercase', letterSpacing:'0.06em', margin:0 }}>{label}</p>
-                  <p style={{ fontSize:'32px', fontWeight:700, color, margin:'4px 0 0', letterSpacing:'-0.02em' }}>{val}</p>
+                  <p style={{ margin:0, fontSize:11, fontWeight:600, color:textColor, textTransform:'uppercase', letterSpacing:'0.06em' }}>{label}</p>
+                  <p style={{ margin:'4px 0 0', fontSize:32, fontWeight:700, color:textColor, letterSpacing:'-0.02em' }}>{val}</p>
                 </div>
-                <div style={{ padding:'8px', borderRadius:'8px', background:bg }}>{icon}</div>
+                <div style={{ padding:8, borderRadius:8, background:bgColor, color:textColor }}>{icon}</div>
               </div>
-              <p style={{ fontSize:'11px', color:'#94a3b8', margin:'12px 0 0' }}>{sub}</p>
+              <p style={{ margin:'12px 0 0', fontSize:11, color:'#94a3b8' }}>{sub}</p>
             </div>
           ))}
         </div>
 
         {/* Category filter */}
-        <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', color:'#64748b' }}>
-            <FilterIcon size={13} /> <span style={{ fontWeight:500 }}>Filter by category</span>
+        <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, color:'#64748b' }}>
+            <FilterIco size={13} /><span style={{ fontWeight:500 }}>Filter by category</span>
           </div>
-          <div style={{ display:'flex', gap:'6px' }}>
-            {categories.map(cat => (
-              <button key={cat} onClick={() => setActiveCategory(cat)} style={{
-                padding:'6px 12px', borderRadius:'8px', fontSize:'12px', fontWeight:500,
-                border: activeCategory === cat ? '1px solid #4f46e5' : '1px solid #e2e8f0',
-                background: activeCategory === cat ? '#4f46e5' : 'white',
-                color: activeCategory === cat ? 'white' : '#475569',
+          <div style={{ display:'flex', gap:6 }}>
+            {cats.map(cat => (
+              <button key={cat} onClick={() => setCatFilter(cat)} style={{
+                padding:'6px 12px', borderRadius:8, fontSize:12, fontWeight:500,
+                border: catFilter===cat ? '1px solid #4f46e5' : '1px solid #e2e8f0',
+                background: catFilter===cat ? '#4f46e5' : 'white',
+                color: catFilter===cat ? 'white' : '#475569',
                 cursor:'pointer', transition:'all 150ms',
               }}>
-                {catLabel[cat] || cat}
-                {cat !== 'All' && <span style={{ marginLeft:'6px', opacity:0.7 }}>({featureReleases.filter(f => f.category === cat).length})</span>}
+                {catLabel[cat]||cat}
+                {cat!=='All' && <span style={{ marginLeft:5, opacity:0.7 }}>({RELEASES.filter(r=>r.category===cat).length})</span>}
               </button>
             ))}
           </div>
         </div>
 
         {/* Table */}
-        <div style={{ background:'white', borderRadius:'12px', border:'1px solid #e2e8f0', overflow:'hidden', boxShadow:'0 1px 3px rgba(0,0,0,0.08)' }}>
-          <div style={{ padding:'16px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-            <h3 style={{ fontSize:'13px', fontWeight:600, color:'#1e293b', margin:0 }}>
-              Feature Releases <span style={{ fontWeight:400, color:'#94a3b8', marginLeft:'8px' }}>({filtered.length} of {featureReleases.length})</span>
+        <div style={{ background:'white', borderRadius:12, border:'1px solid #e2e8f0', overflow:'hidden', boxShadow:'0 1px 3px rgba(0,0,0,0.08)' }}>
+          <div style={{ padding:'14px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+            <h3 style={{ margin:0, fontSize:13, fontWeight:600, color:'#1e293b' }}>
+              Feature Releases <span style={{ fontWeight:400, color:'#94a3b8' }}>({filtered.length} of {RELEASES.length})</span>
             </h3>
-            <span style={{ fontSize:'11px', color:'#94a3b8' }}>Click a row to see risk details</span>
+            <span style={{ fontSize:11, color:'#94a3b8' }}>Click a row to see risk details</span>
           </div>
           <table className="data-table">
             <thead>
               <tr>
-                <th style={{ width:'28%' }}>Feature</th>
+                <th style={{ width:'27%' }}>Feature</th>
                 <th style={{ width:'13%' }}>Category</th>
-                <th style={{ width:'17%' }}>Teams</th>
+                <th style={{ width:'16%' }}>Teams</th>
                 <th style={{ width:'11%' }}>Committed</th>
                 <th style={{ width:'11%' }}>Progress</th>
-                <th style={{ width:'9%' }}>Status</th>
-                <th style={{ width:'11%' }}>Risk</th>
+                <th style={{ width:'9%'  }}>Status</th>
+                <th style={{ width:'13%' }}>Risk</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map(f => {
-                const expanded = expandedRow === f.id;
-                const overdue = isOverdue(f.committedDate) && f.status !== 'On Track';
+              {filtered.map(r => {
+                const open = expandedId === r.id;
+                const overdue = past(r.committedDate) && r.status !== 'On Track';
                 return (
-                  <React.Fragment key={f.id}>
-                    <tr className={expanded ? 'expanded-row' : ''} style={{ cursor:'pointer' }} onClick={() => setExpandedRow(expanded ? null : f.id)}>
+                  <React.Fragment key={r.id}>
+                    <tr className={open ? 'row-selected' : ''} onClick={() => setExpandedId(open ? null : r.id)}>
                       <td>
-                        <div style={{ display:'flex', alignItems:'flex-start', gap:'8px' }}>
-                          <div style={{ flex:1 }}>
-                            <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
-                              <span style={{ fontSize:'10px', fontFamily:'JetBrains Mono,monospace', color:'#94a3b8' }}>{f.id}</span>
-                              <ChevronRightIcon size={11} cls={expanded ? 'rotate-90' : ''} />
-                            </div>
-                            <p style={{ fontSize:'13px', fontWeight:600, color:'#1e293b', margin:'2px 0 0', lineHeight:1.3 }}>{f.name}</p>
-                            <p style={{ fontSize:'11px', fontFamily:'JetBrains Mono,monospace', color:'#94a3b8', margin:'2px 0 0' }}>{f.jiraEpic}</p>
-                          </div>
+                        <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:2 }}>
+                          <span style={{ fontSize:10, fontFamily:'JetBrains Mono,monospace', color:'#94a3b8' }}>{r.id}</span>
+                          <span style={{ display:'inline-block', transition:'transform 200ms', transform: open?'rotate(90deg)':'' }}><ChevIco size={11} cls="text-slate-400"/></span>
                         </div>
+                        <div style={{ fontSize:13, fontWeight:600, color:'#1e293b', lineHeight:1.3 }}>{r.name}</div>
+                        <div style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace', color:'#94a3b8', marginTop:2 }}>{r.jiraEpic}</div>
                       </td>
-                      <td><CategoryBadge category={f.category} /></td>
-                      <td><div style={{ display:'flex', flexWrap:'wrap', gap:'4px' }}>{f.teams.map(t => <TeamChip key={t} team={t} />)}</div></td>
+                      <td><CatBadge cat={r.category} /></td>
+                      <td><div style={{ display:'flex', flexWrap:'wrap', gap:4 }}>{r.teams.map(t=><TeamChip key={t} team={t}/>)}</div></td>
                       <td>
-                        <div style={{ display:'flex', alignItems:'center', gap:'5px' }}>
-                          <CalendarIcon size={13} cls={overdue ? 'text-red-400' : 'text-slate-400'} />
-                          <span style={{ fontSize:'12px', fontWeight:500, color: overdue ? '#dc2626' : '#334155' }}>{fmtDate(f.committedDate)}</span>
+                        <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+                          <CalIco size={13} cls={overdue?'text-red-400':'text-slate-400'} />
+                          <span style={{ fontSize:12, fontWeight:500, color: overdue?'#dc2626':'#334155' }}>{fmt(r.committedDate)}</span>
                         </div>
-                        {f.deliveredDate && <p style={{ fontSize:'10px', color:'#94a3b8', marginTop:'2px', marginLeft:'18px' }}>Delivered {fmtDate(f.deliveredDate)}</p>}
+                        {r.deliveredDate && <div style={{ fontSize:10, color:'#94a3b8', marginTop:2, marginLeft:18 }}>Delivered {fmt(r.deliveredDate)}</div>}
                       </td>
-                      <td><ProgressBar value={f.progress} /></td>
-                      <td><StatusBadge status={f.status} /></td>
+                      <td><ProgressBar value={r.progress}/></td>
+                      <td><StatusBadge status={r.status}/></td>
                       <td>
-                        <div style={{ display:'flex', flexDirection:'column', gap:'6px' }}>
-                          <RiskBadge level={f.riskLevel} />
-                          {f.atRiskTeam && (
-                            <button onClick={e => { e.stopPropagation(); navigate('/sprints?team=' + f.atRiskTeam); }} style={{ display:'flex', alignItems:'center', gap:'4px', fontSize:'11px', fontWeight:600, color:'#4f46e5', background:'none', border:'none', cursor:'pointer', padding:0 }}>
-                              <UsersIcon size={11} />{f.atRiskTeam} Sprints <ChevronRightIcon size={10} />
+                        <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                          <RiskBadge level={r.riskLevel}/>
+                          {r.atRiskTeam && (
+                            <button onClick={e => { e.stopPropagation(); navigate('sprints', r.atRiskTeam); }} style={{ display:'flex', alignItems:'center', gap:4, fontSize:11, fontWeight:600, color:'#4f46e5', background:'none', border:'none', cursor:'pointer', padding:0 }}>
+                              <UsersIco size={11}/>{r.atRiskTeam} Sprints<ChevIco size={10}/>
                             </button>
                           )}
                         </div>
                       </td>
                     </tr>
-                    {expanded && (
+                    {open && (
                       <tr>
-                        <td colSpan={7} style={{ padding:'0' }}>
-                          <div style={{ margin:'0 16px 12px', padding:'16px', borderRadius:'12px', background:'#f8fafc', border:'1px solid #e2e8f0' }}>
-                            <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:'16px' }}>
+                        <td colSpan={7} style={{ padding:0 }}>
+                          <div style={{ margin:'0 16px 12px', padding:16, borderRadius:12, background:'#f8fafc', border:'1px solid #e2e8f0' }}>
+                            <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:16 }}>
                               <div>
-                                <div style={{ display:'flex', alignItems:'center', gap:'6px', marginBottom:'8px' }}>
-                                  <InfoIcon size={13} cls="text-slate-500" />
-                                  <span style={{ fontSize:'11px', fontWeight:600, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.06em' }}>Description</span>
+                                <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:8 }}>
+                                  <InfoIco size={13} cls="text-slate-500"/>
+                                  <span style={{ fontSize:11, fontWeight:600, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.06em' }}>Description</span>
                                 </div>
-                                <p style={{ fontSize:'12px', color:'#475569', lineHeight:1.6, margin:0 }}>{f.description}</p>
+                                <p style={{ margin:0, fontSize:12, color:'#475569', lineHeight:1.6 }}>{r.description}</p>
                               </div>
-                              <div style={{ borderRadius:'10px', padding:'12px', border:'1px solid', ...{
-                                Critical:{ background:'#fef2f2', borderColor:'#fecaca' },
-                                High:    { background:'#fff7ed', borderColor:'#fed7aa' },
-                                Medium:  { background:'#fffbeb', borderColor:'#fde68a' },
-                                Low:     { background:'#f0fdf4', borderColor:'#bbf7d0' },
-                              }[f.riskLevel] }}>
-                                <div style={{ display:'flex', alignItems:'center', gap:'6px', marginBottom:'8px' }}>
-                                  <AlertTriangleIcon size={13} />
-                                  <span style={{ fontSize:'11px', fontWeight:600, color:'#334155' }}>Risk Analysis</span>
+                              <div style={{ borderRadius:10, padding:12, border:'1px solid', ...{ Critical:{background:'#fef2f2',borderColor:'#fecaca'}, High:{background:'#fff7ed',borderColor:'#fed7aa'}, Medium:{background:'#fffbeb',borderColor:'#fde68a'}, Low:{background:'#f0fdf4',borderColor:'#bbf7d0'} }[r.riskLevel] }}>
+                                <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:8 }}>
+                                  <WarnIco size={13}/><span style={{ fontSize:11, fontWeight:600, color:'#334155' }}>Risk Analysis</span>
                                 </div>
-                                <p style={{ fontSize:'12px', color:'#475569', lineHeight:1.5, margin:0 }}>{f.riskReason}</p>
-                                {f.atRiskTeam && (
-                                  <button onClick={() => navigate('/sprints?team=' + f.atRiskTeam)} style={{ marginTop:'12px', width:'100%', padding:'8px', borderRadius:'8px', background:'#4f46e5', color:'white', fontSize:'12px', fontWeight:600, border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px' }}>
-                                    <BarChart3Icon size={12} /> View {f.atRiskTeam} Team Sprints
+                                <p style={{ margin:0, fontSize:12, color:'#475569', lineHeight:1.5 }}>{r.riskReason}</p>
+                                {r.atRiskTeam && (
+                                  <button onClick={() => navigate('sprints', r.atRiskTeam)} style={{ marginTop:12, width:'100%', padding:'8px 0', borderRadius:8, background:'#4f46e5', color:'white', fontSize:12, fontWeight:600, border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
+                                    <BarIco size={12}/>View {r.atRiskTeam} Team Sprints
                                   </button>
                                 )}
                               </div>
@@ -709,15 +628,15 @@ function FeatureReleasePage() {
         </div>
 
         {/* Legend */}
-        <div style={{ display:'flex', alignItems:'center', gap:'24px', fontSize:'12px', color:'#64748b', paddingBottom:'24px' }}>
-          {[['#ef4444','Critical — immediate escalation',true],['#f97316','High — close monitoring'],['#f59e0b','Medium — plan mitigation'],['#22c55e','Low — on track']].map(([c, label, pulse]) => (
-            <div key={label} style={{ display:'flex', alignItems:'center', gap:'6px' }}>
-              <span className={pulse ? 'live-dot' : ''} style={{ width:'8px', height:'8px', borderRadius:'50%', background:c, display:'inline-block' }} />
-              {label}
+        <div style={{ display:'flex', alignItems:'center', gap:20, fontSize:12, color:'#64748b', paddingBottom:24, flexWrap:'wrap' }}>
+          {[['#ef4444','Critical — immediate escalation',true],['#f97316','High — close monitoring'],['#f59e0b','Medium — plan mitigation'],['#22c55e','Low — on track']].map(([c,l,p])=>(
+            <div key={l} style={{ display:'flex', alignItems:'center', gap:6 }}>
+              <span className={p?'live-dot':''} style={{ width:8,height:8,borderRadius:'50%',background:c,display:'inline-block' }}/>
+              {l}
             </div>
           ))}
-          <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:'4px', color:'#4f46e5', fontWeight:500 }}>
-            <UsersIcon size={12} /> Team links navigate to Sprint Metrics
+          <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:4, color:'#4f46e5', fontWeight:500 }}>
+            <UsersIco size={12}/>Team links navigate to Sprint Metrics
           </div>
         </div>
       </div>
@@ -725,38 +644,38 @@ function FeatureReleasePage() {
   );
 }
 
-// ─── Custom Recharts Tooltip ──────────────────────────────────────────────────
-function VelocityTooltip({ active, payload, label }) {
+// ─── Velocity chart tooltip ───────────────────────────────────────────────────
+function VelTooltip({ active, payload, label }) {
   if (!active || !payload || !payload.length) return null;
-  const plan = payload.find(p => p.name === 'Planned')?.value || 0;
-  const done = payload.find(p => p.name === 'Completed')?.value || 0;
-  const vel = plan > 0 ? Math.round((done / plan) * 100) : 0;
-  const velColor = vel >= 80 ? '#16a34a' : vel >= 60 ? '#d97706' : '#dc2626';
+  const plan = (payload.find(p=>p.name==='Planned')||{}).value||0;
+  const done = (payload.find(p=>p.name==='Completed')||{}).value||0;
+  const vel  = plan>0 ? Math.round(done/plan*100) : 0;
+  const vc   = vel>=80?'#16a34a':vel>=60?'#d97706':'#dc2626';
   return (
-    <div style={{ background:'white', border:'1px solid #e2e8f0', borderRadius:'10px', padding:'10px 14px', fontSize:'11px', boxShadow:'0 4px 12px rgba(0,0,0,0.1)', minWidth:'140px' }}>
-      <p style={{ fontWeight:600, color:'#334155', marginBottom:'8px', paddingBottom:'6px', borderBottom:'1px solid #f1f5f9' }}>{label}</p>
-      {payload.map(p => (
-        <div key={p.name} style={{ display:'flex', justifyContent:'space-between', gap:'16px', padding:'2px 0' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
-            <span style={{ width:'8px', height:'8px', borderRadius:'2px', background:p.color, display:'inline-block' }} />
+    <div style={{ background:'white', border:'1px solid #e2e8f0', borderRadius:10, padding:'10px 14px', fontSize:11, boxShadow:'0 4px 12px rgba(0,0,0,0.1)', minWidth:140 }}>
+      <p style={{ margin:'0 0 8px', fontWeight:600, color:'#334155', paddingBottom:6, borderBottom:'1px solid #f1f5f9' }}>{label}</p>
+      {payload.map(p=>(
+        <div key={p.name} style={{ display:'flex', justifyContent:'space-between', gap:16, padding:'2px 0' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+            <span style={{ width:8,height:8,borderRadius:2,background:p.color,display:'inline-block' }}/>
             <span style={{ color:'#64748b' }}>{p.name}</span>
           </div>
           <span style={{ fontFamily:'JetBrains Mono,monospace', fontWeight:700, color:'#1e293b' }}>{p.value} pts</span>
         </div>
       ))}
-      <div style={{ borderTop:'1px solid #f1f5f9', marginTop:'6px', paddingTop:'6px', display:'flex', justifyContent:'space-between' }}>
+      <div style={{ borderTop:'1px solid #f1f5f9', marginTop:6, paddingTop:6, display:'flex', justifyContent:'space-between' }}>
         <span style={{ color:'#64748b' }}>Velocity</span>
-        <span style={{ fontFamily:'JetBrains Mono,monospace', fontWeight:700, color:velColor }}>{vel}%</span>
+        <span style={{ fontFamily:'JetBrains Mono,monospace', fontWeight:700, color:vc }}>{vel}%</span>
       </div>
     </div>
   );
 }
 
 // ─── Sprint Metrics Page ──────────────────────────────────────────────────────
-const TEAM_CONFIG = [
-  { name:'Hardware', icon:<CpuIcon size={14}/>,   color:'#0e7490', bg:'#ecfeff', border:'#a5f3fc' },
-  { name:'Software', icon:<Code2Icon size={14}/>,  color:'#4338ca', bg:'#eef2ff', border:'#c7d2fe' },
-  { name:'Quality',  icon:<FlaskIcon size={14}/>,  color:'#7c3aed', bg:'#f5f3ff', border:'#e9d5ff' },
+const TEAM_CFG = [
+  { name:'Hardware', icon:<CpuIco  size={14}/>, color:'#0e7490', bg:'#ecfeff', border:'#a5f3fc' },
+  { name:'Software', icon:<CodeIco size={14}/>, color:'#4338ca', bg:'#eef2ff', border:'#c7d2fe' },
+  { name:'Quality',  icon:<FlaskIco size={14}/>, color:'#7c3aed', bg:'#f5f3ff', border:'#ddd6fe' },
 ];
 const ACCENT = {
   Hardware: { planned:'#a5f3fc', completed:'#06b6d4' },
@@ -765,208 +684,194 @@ const ACCENT = {
 };
 
 function SprintMetricsPage() {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const teamParam = searchParams.get('team');
-  const defaultTeam = TEAM_SPRINTS[teamParam] ? teamParam : 'Software';
-  const [selectedTeam, setSelectedTeam] = useState(defaultTeam);
-  const [selectedSprintId, setSelectedSprintId] = useState(null);
+  const { navigate, sprintTeam } = useNav();
+  const [team, setTeam] = useState(sprintTeam || 'Software');
+  const [selSprint, setSelSprint] = useState(null);
 
-  useEffect(() => {
-    if (TEAM_SPRINTS[teamParam]) setSelectedTeam(teamParam);
-  }, [teamParam]);
+  useEffect(() => { if (sprintTeam) setTeam(sprintTeam); }, [sprintTeam]);
 
-  const sprints = TEAM_SPRINTS[selectedTeam] || [];
+  const sprints   = TEAM_SPRINTS[team] || [];
   const completed = sprints.filter(s => s.status === 'Completed');
-  const active = sprints.find(s => s.status === 'Active');
-  const accent = ACCENT[selectedTeam];
-  const teamCfg = TEAM_CONFIG.find(t => t.name === selectedTeam);
+  const active    = sprints.find(s => s.status === 'Active');
+  const accent    = ACCENT[team];
+  const tcfg      = TEAM_CFG.find(t => t.name === team);
 
-  const chartData = sprints.filter(s => s.status !== 'Future').map(s => ({
-    name: s.name.replace('HW ','S').replace('SW ','S').replace('QA ','S'),
-    Planned: s.plannedPoints,
+  const chartData = sprints.filter(s=>s.status!=='Future').map(s=>({
+    name: s.name.replace('HW ','').replace('SW ','').replace('QA ',''),
+    Planned:   s.plannedPoints,
     Completed: s.completedPoints,
-    isActive: s.status === 'Active',
+    isActive:  s.status==='Active',
   }));
 
-  const avgVel = completed.length ? Math.round(completed.reduce((a,b) => a + b.velocity, 0) / completed.length) : 0;
-  const totalPts = sprints.reduce((a,s) => a + s.completedPoints, 0);
-  const totalBugs = sprints.reduce((a,s) => a + s.bugsFound, 0);
-  const totalBlocked = sprints.reduce((a,s) => a + s.blockedCount, 0);
-  const velColor = avgVel >= 80 ? '#16a34a' : avgVel >= 65 ? '#d97706' : '#dc2626';
+  const avgVel    = completed.length ? Math.round(completed.reduce((a,b)=>a+b.velocity,0)/completed.length) : 0;
+  const totalPts  = sprints.reduce((a,s)=>a+s.completedPoints,0);
+  const totalBugs = sprints.reduce((a,s)=>a+s.bugsFound,0);
+  const totalBlk  = sprints.reduce((a,s)=>a+s.blockedCount,0);
+  const vc        = avgVel>=80?'#16a34a':avgVel>=65?'#d97706':'#dc2626';
 
-  const fmtDate = iso => new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  const fmt = iso => new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+
+  const kpis2 = [
+    { label:'Avg Velocity',     val:`${avgVel}%`, sub:`${completed.length} completed sprints`, textColor:vc,       bg:avgVel>=80?'#f0fdf4':avgVel>=65?'#fff7ed':'#fef2f2', icon: avgVel>=80?<UpIco size={16}/>:<DownIco size={16}/> },
+    { label:'Points Delivered', val:totalPts,     sub:'Story points YTD',                       textColor:'#1e293b',bg:'#eef2ff',                                            icon:<TargetIco size={16}/> },
+    { label:'Bugs Found',       val:totalBugs,    sub:'Across all sprints',                      textColor:'#dc2626',bg:'#fef2f2',                                            icon:<BugIco  size={16}/> },
+    { label:'Blocked Items',    val:totalBlk,     sub:'Total blocked ticket-sprints',            textColor:'#c2410c',bg:'#fff7ed',                                            icon:<AlertCIco size={16}/> },
+  ];
 
   return (
     <div style={{ minHeight:'100vh', background:'#f8fafc' }}>
       {/* Header */}
-      <div style={{ background:'white', borderBottom:'1px solid #e2e8f0', padding:'20px 32px' }}>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-            <div style={{ padding:'8px', borderRadius:'8px', background:'#eef2ff', border:'1px solid #e0e7ff' }}>
-              <BarChart3Icon size={20} cls="text-indigo-600" />
-            </div>
-            <div>
-              <h2 style={{ fontSize:'20px', fontWeight:700, color:'#0f172a', letterSpacing:'-0.02em', margin:0 }}>Sprint Metrics</h2>
-              <p style={{ fontSize:'13px', color:'#64748b', margin:'2px 0 0' }}>JIRA sprint data · Jan – Jun 2026 · 13 sprints per team</p>
-            </div>
+      <div style={{ background:'white', borderBottom:'1px solid #e2e8f0', padding:'20px 32px', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+          <div style={{ padding:8, borderRadius:8, background:'#eef2ff', border:'1px solid #e0e7ff' }}>
+            <BarIco size={20} cls="text-indigo-600"/>
           </div>
-          <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
-            {teamParam && (
-              <button onClick={() => navigate('/')} style={{ display:'flex', alignItems:'center', gap:'5px', fontSize:'12px', fontWeight:500, color:'#4f46e5', background:'none', border:'none', cursor:'pointer' }}>
-                <ArrowLeftIcon size={13} /> Back to Feature Releases
-              </button>
-            )}
-            <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', color:'#64748b', background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:'8px', padding:'8px 12px' }}>
-              <ClockIcon size={13} /> Sprint 13 active · Jun 22 – Jul 3
-            </div>
+          <div>
+            <h2 style={{ margin:0, fontSize:20, fontWeight:700, color:'#0f172a', letterSpacing:'-0.02em' }}>Sprint Metrics</h2>
+            <p style={{ margin:'2px 0 0', fontSize:13, color:'#64748b' }}>JIRA sprint data · Jan – Jun 2026 · 13 sprints per team</p>
+          </div>
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+          <button onClick={() => navigate('releases')} style={{ display:'flex', alignItems:'center', gap:5, fontSize:12, fontWeight:500, color:'#4f46e5', background:'none', border:'none', cursor:'pointer' }}>
+            <BackIco size={13}/>Back to Feature Releases
+          </button>
+          <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, color:'#64748b', background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:8, padding:'8px 12px' }}>
+            <ClockIco size={13}/>Sprint 13 active · Jun 22 – Jul 3
           </div>
         </div>
       </div>
 
-      <div style={{ padding:'24px 32px', display:'flex', flexDirection:'column', gap:'24px' }}>
-        {/* Team Selector */}
-        <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
-          <span style={{ fontSize:'11px', fontWeight:600, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.08em', marginRight:'8px' }}>Team</span>
-          {TEAM_CONFIG.map(t => (
-            <button key={t.name} onClick={() => { setSelectedTeam(t.name); setSelectedSprintId(null); }} style={{
-              display:'flex', alignItems:'center', gap:'8px',
-              padding:'8px 16px', borderRadius:'12px', fontSize:'13px', fontWeight:600,
-              border:`1px solid ${selectedTeam === t.name ? t.border : '#e2e8f0'}`,
-              background: selectedTeam === t.name ? t.bg : 'white',
-              color: selectedTeam === t.name ? t.color : '#475569',
-              cursor:'pointer', transition:'all 150ms',
-              boxShadow: selectedTeam === t.name ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+      <div style={{ padding:'24px 32px', display:'flex', flexDirection:'column', gap:24 }}>
+        {/* Team tabs */}
+        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <span style={{ fontSize:11, fontWeight:600, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.08em', marginRight:8 }}>Team</span>
+          {TEAM_CFG.map(t=>(
+            <button key={t.name} onClick={()=>{setTeam(t.name);setSelSprint(null);}} style={{
+              display:'flex', alignItems:'center', gap:8, padding:'8px 16px',
+              borderRadius:12, fontSize:13, fontWeight:600, cursor:'pointer', transition:'all 150ms',
+              border:`1px solid ${team===t.name?t.border:'#e2e8f0'}`,
+              background: team===t.name?t.bg:'white',
+              color: team===t.name?t.color:'#475569',
+              boxShadow: team===t.name?'0 1px 3px rgba(0,0,0,0.08)':'none',
             }}>
-              {t.icon} {t.name}
+              {t.icon}{t.name}
             </button>
           ))}
         </div>
 
-        {/* KPI Cards */}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'16px' }}>
-          {[
-            { label:'Avg Velocity', val:`${avgVel}%`, sub:`Across ${completed.length} completed sprints`, color:velColor, bg:avgVel>=80?'#f0fdf4':avgVel>=65?'#fff7ed':'#fef2f2', icon: avgVel>=80?<TrendingUpIcon size={16}/>:<TrendingDownIcon size={16}/> },
-            { label:'Points Delivered', val:totalPts, sub:'Story points completed YTD', color:'#1e293b', bg:'#eef2ff', icon:<TargetIcon size={16} cls="text-indigo-600"/> },
-            { label:'Bugs Found', val:totalBugs, sub:'Across all sprints (YTD)', color:'#dc2626', bg:'#fef2f2', icon:<BugIcon size={16} cls="text-red-500"/> },
-            { label:'Blocked Items', val:totalBlocked, sub:'Total blocked ticket-sprints', color:'#c2410c', bg:'#fff7ed', icon:<AlertCircleIcon size={16} cls="text-orange-500"/> },
-          ].map(({ label, val, sub, color, bg, icon }) => (
+        {/* KPI cards */}
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }}>
+          {kpis2.map(({label,val,sub,textColor,bg,icon})=>(
             <div key={label} className="kpi-card">
               <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between' }}>
                 <div>
-                  <p style={{ fontSize:'11px', fontWeight:600, color, textTransform:'uppercase', letterSpacing:'0.06em', margin:0 }}>{label}</p>
-                  <p style={{ fontSize:'32px', fontWeight:700, color, margin:'4px 0 0', letterSpacing:'-0.02em' }}>{val}</p>
+                  <p style={{ margin:0, fontSize:11, fontWeight:600, color:textColor, textTransform:'uppercase', letterSpacing:'0.06em' }}>{label}</p>
+                  <p style={{ margin:'4px 0 0', fontSize:32, fontWeight:700, color:textColor, letterSpacing:'-0.02em' }}>{val}</p>
                 </div>
-                <div style={{ padding:'8px', borderRadius:'8px', background:bg }}>{icon}</div>
+                <div style={{ padding:8, borderRadius:8, background:bg, color:textColor }}>{icon}</div>
               </div>
-              <p style={{ fontSize:'11px', color:'#94a3b8', margin:'12px 0 0' }}>{sub}</p>
+              <p style={{ margin:'12px 0 0', fontSize:11, color:'#94a3b8' }}>{sub}</p>
             </div>
           ))}
         </div>
 
         {/* Chart + Active Sprint */}
-        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:'16px' }}>
-          {/* Velocity Chart */}
-          <div style={{ background:'white', borderRadius:'12px', border:'1px solid #e2e8f0', overflow:'hidden', boxShadow:'0 1px 3px rgba(0,0,0,0.08)' }}>
-            <div style={{ padding:'16px 20px', borderBottom:'1px solid #f1f5f9', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+        <div style={{ display:'grid', gridTemplateColumns:'2fr 1fr', gap:16 }}>
+          {/* Velocity chart */}
+          <div style={{ background:'white', borderRadius:12, border:'1px solid #e2e8f0', overflow:'hidden', boxShadow:'0 1px 3px rgba(0,0,0,0.08)' }}>
+            <div style={{ padding:'14px 20px', borderBottom:'1px solid #f1f5f9', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
               <div>
-                <h3 style={{ fontSize:'13px', fontWeight:600, color:'#1e293b', margin:0 }}>Sprint Velocity Trend</h3>
-                <p style={{ fontSize:'12px', color:'#94a3b8', margin:'2px 0 0' }}>Planned vs. Completed story points</p>
+                <h3 style={{ margin:0, fontSize:13, fontWeight:600, color:'#1e293b' }}>Sprint Velocity Trend</h3>
+                <p style={{ margin:'2px 0 0', fontSize:12, color:'#94a3b8' }}>Planned vs. Completed story points — all 13 sprints</p>
               </div>
-              {teamCfg && (
-                <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', fontWeight:600, padding:'6px 12px', borderRadius:'9999px', background:teamCfg.bg, color:teamCfg.color, border:`1px solid ${teamCfg.border}` }}>
-                  {teamCfg.icon} {selectedTeam} Team
+              {tcfg && (
+                <div style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, fontWeight:600, padding:'6px 12px', borderRadius:9999, background:tcfg.bg, color:tcfg.color, border:`1px solid ${tcfg.border}` }}>
+                  {tcfg.icon}{team} Team
                 </div>
               )}
             </div>
-            <div style={{ padding:'16px 20px', height:'240px' }}>
+            <div style={{ padding:'16px 20px', height:240 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData} barCategoryGap="30%" barGap={3}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                  <XAxis dataKey="name" tick={{ fontSize:10, fill:'#94a3b8' }} axisLine={false} tickLine={false}
-                    tickFormatter={v => v.replace('Sprint ','S')} />
-                  <YAxis tick={{ fontSize:10, fill:'#94a3b8' }} axisLine={false} tickLine={false} width={28} />
-                  <Tooltip content={<VelocityTooltip />} cursor={{ fill:'rgba(99,102,241,0.04)' }} />
-                  <Legend wrapperStyle={{ fontSize:'11px', paddingTop:'6px' }} iconType="square" iconSize={8} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false}/>
+                  <XAxis dataKey="name" tick={{ fontSize:10, fill:'#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={v=>v.replace('Sprint ','')}/>
+                  <YAxis tick={{ fontSize:10, fill:'#94a3b8' }} axisLine={false} tickLine={false} width={28}/>
+                  <Tooltip content={<VelTooltip/>} cursor={{ fill:'rgba(99,102,241,0.04)' }}/>
+                  <Legend wrapperStyle={{ fontSize:11, paddingTop:6 }} iconType="square" iconSize={8}/>
                   <Bar dataKey="Planned" radius={[3,3,0,0]}>
-                    {chartData.map((d,i) => <Cell key={i} fill={d.isActive ? '#ddd6fe' : accent.planned} opacity={d.isActive?0.6:1} />)}
+                    {chartData.map((d,i)=><Cell key={i} fill={d.isActive?'#ddd6fe':accent.planned} opacity={d.isActive?0.6:1}/>)}
                   </Bar>
                   <Bar dataKey="Completed" radius={[3,3,0,0]}>
-                    {chartData.map((d,i) => <Cell key={i} fill={accent.completed} opacity={d.isActive?0.5:1} />)}
+                    {chartData.map((d,i)=><Cell key={i} fill={accent.completed} opacity={d.isActive?0.5:1}/>)}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            {/* Sprint health bar */}
-            <div style={{ padding:'0 20px 16px', display:'flex', alignItems:'center', gap:'10px' }}>
-              <span style={{ fontSize:'11px', color:'#64748b', flexShrink:0 }}>Sprint health</span>
-              <div style={{ display:'flex', flex:1, gap:'2px', height:'6px', borderRadius:'9999px', overflow:'hidden' }}>
-                {completed.map(s => (
-                  <div key={s.id} className="health-bar-segment" style={{ background: s.velocity>=80?'#4ade80':s.velocity>=60?'#fbbf24':'#f87171' }} title={`${s.name}: ${s.velocity}%`} />
-                ))}
-                {active && <div className="health-bar-segment live-dot" style={{ background:accent.completed, opacity:0.5 }} title="Active sprint" />}
+            {/* Health bar */}
+            <div style={{ padding:'0 20px 14px', display:'flex', alignItems:'center', gap:10 }}>
+              <span style={{ fontSize:11, color:'#64748b', flexShrink:0 }}>Sprint health</span>
+              <div style={{ display:'flex', flex:1, gap:2, height:6, borderRadius:9999, overflow:'hidden' }}>
+                {completed.map(s=><div key={s.id} style={{ flex:1, background:s.velocity>=80?'#4ade80':s.velocity>=60?'#fbbf24':'#f87171' }} title={`${s.name}: ${s.velocity}%`}/>)}
+                {active && <div className="live-dot" style={{ flex:1, background:accent.completed, opacity:0.5 }}/>}
               </div>
-              <span style={{ fontSize:'12px', fontWeight:700, color:velColor, flexShrink:0 }}>{avgVel}% avg</span>
+              <span style={{ fontSize:12, fontWeight:700, color:vc, flexShrink:0 }}>{avgVel}% avg</span>
             </div>
           </div>
 
-          {/* Active Sprint Panel */}
-          <div style={{ background:'white', borderRadius:'12px', border:'1px solid #e2e8f0', overflow:'hidden', boxShadow:'0 1px 3px rgba(0,0,0,0.08)' }}>
-            <div style={{ padding:'14px 20px', borderBottom:'1px solid #f1f5f9', display:'flex', alignItems:'center', gap:'8px' }}>
-              <ActivityIcon size={15} cls="text-indigo-500" />
-              <span style={{ fontSize:'13px', fontWeight:600, color:'#1e293b' }}>Active Sprint</span>
-              {active && <span style={{ marginLeft:'auto', fontSize:'10px', fontWeight:700, color:'#16a34a', background:'#f0fdf4', border:'1px solid #bbf7d0', padding:'2px 8px', borderRadius:'9999px' }}>LIVE</span>}
+          {/* Active sprint */}
+          <div style={{ background:'white', borderRadius:12, border:'1px solid #e2e8f0', overflow:'hidden', boxShadow:'0 1px 3px rgba(0,0,0,0.08)', display:'flex', flexDirection:'column' }}>
+            <div style={{ padding:'14px 20px', borderBottom:'1px solid #f1f5f9', display:'flex', alignItems:'center', gap:8 }}>
+              <ActivityIco size={15} cls="text-indigo-500"/>
+              <span style={{ fontSize:13, fontWeight:600, color:'#1e293b' }}>Active Sprint</span>
+              {active && <span style={{ marginLeft:'auto', fontSize:10, fontWeight:700, color:'#16a34a', background:'#f0fdf4', border:'1px solid #bbf7d0', padding:'2px 8px', borderRadius:9999 }}>LIVE</span>}
             </div>
             {active ? (
-              <div style={{ padding:'16px 20px', display:'flex', flexDirection:'column', gap:'14px', overflowY:'auto', maxHeight:'480px' }}>
+              <div style={{ padding:'16px 20px', display:'flex', flexDirection:'column', gap:14, overflowY:'auto', flex:1 }}>
                 <div>
-                  <p style={{ fontSize:'13px', fontWeight:600, color:'#1e293b', margin:0 }}>{active.name}</p>
-                  <p style={{ fontSize:'11px', color:'#94a3b8', margin:'2px 0 0' }}>{fmtDate(active.startDate)} – {fmtDate(active.endDate)}</p>
+                  <p style={{ margin:0, fontSize:13, fontWeight:600, color:'#1e293b' }}>{active.name}</p>
+                  <p style={{ margin:'2px 0 0', fontSize:11, color:'#94a3b8' }}>{fmt(active.startDate)} – {fmt(active.endDate)}</p>
                 </div>
-                <div style={{ fontSize:'11px', color:'#475569', background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:'8px', padding:'10px 12px', lineHeight:1.5 }}>
+                <div style={{ fontSize:11, color:'#475569', background:'#f8fafc', border:'1px solid #e2e8f0', borderRadius:8, padding:'10px 12px', lineHeight:1.5 }}>
                   <span style={{ fontWeight:600, color:'#334155' }}>Goal: </span>{active.goal}
                 </div>
-                {/* Progress */}
                 <div>
-                  <div style={{ display:'flex', justifyContent:'space-between', marginBottom:'6px' }}>
-                    <span style={{ fontSize:'12px', color:'#475569' }}>Completion</span>
-                    <span style={{ fontSize:'12px', fontWeight:700, color:'#1e293b' }}>{active.completedPoints}/{active.plannedPoints} pts</span>
+                  <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
+                    <span style={{ fontSize:12, color:'#475569' }}>Completion</span>
+                    <span style={{ fontSize:12, fontWeight:700, color:'#1e293b' }}>{active.completedPoints}/{active.plannedPoints} pts</span>
                   </div>
-                  <div style={{ height:'8px', borderRadius:'9999px', background:'#f1f5f9', overflow:'hidden' }}>
-                    <div style={{ height:'100%', borderRadius:'9999px', background: active.velocity<60?'#f87171':active.velocity<80?'#fbbf24':'#4ade80', width:`${Math.min(100,(active.completedPoints/active.plannedPoints)*100)}%`, transition:'width 500ms' }} />
+                  <div style={{ height:8, borderRadius:9999, background:'#f1f5f9', overflow:'hidden' }}>
+                    <div style={{ height:'100%', borderRadius:9999, width:`${Math.min(100,active.completedPoints/active.plannedPoints*100)}%`, background: active.velocity<60?'#f87171':active.velocity<80?'#fbbf24':'#4ade80', transition:'width 500ms' }}/>
                   </div>
-                  <div style={{ display:'flex', justifyContent:'space-between', marginTop:'4px' }}>
-                    <span style={{ fontSize:'10px', color:'#94a3b8' }}>~43% sprint time elapsed</span>
-                    <span style={{ fontSize:'10px', fontWeight:600, color: active.velocity<60?'#dc2626':'#d97706' }}>{Math.round((active.completedPoints/active.plannedPoints)*100)}% done</span>
+                  <div style={{ display:'flex', justifyContent:'space-between', marginTop:4 }}>
+                    <span style={{ fontSize:10, color:'#94a3b8' }}>~43% sprint time elapsed</span>
+                    <span style={{ fontSize:10, fontWeight:600, color: active.velocity<60?'#dc2626':'#d97706' }}>{Math.round(active.completedPoints/active.plannedPoints*100)}% done</span>
                   </div>
                 </div>
-                {/* Stats */}
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:'8px' }}>
-                  {[{ l:'Bugs', v:active.bugsFound, c:'#dc2626' },{ l:'Blocked', v:active.blockedCount, c:'#c2410c' },{ l:'Carried', v:active.carriedOver, c:'#475569' }].map(({ l,v,c }) => (
-                    <div key={l} style={{ textAlign:'center', background:'#f8fafc', borderRadius:'8px', padding:'8px 4px', border:'1px solid #f1f5f9' }}>
-                      <p style={{ fontSize:'22px', fontWeight:700, color:c, margin:0 }}>{v}</p>
-                      <p style={{ fontSize:'10px', color:'#64748b', margin:'2px 0 0' }}>{l}</p>
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
+                  {[['Bugs',active.bugsFound,'#dc2626'],['Blocked',active.blockedCount,'#c2410c'],['Carried',active.carriedOver,'#475569']].map(([l,v,c])=>(
+                    <div key={l} style={{ textAlign:'center', background:'#f8fafc', borderRadius:8, padding:'8px 4px', border:'1px solid #f1f5f9' }}>
+                      <p style={{ margin:0, fontSize:22, fontWeight:700, color:c }}>{v}</p>
+                      <p style={{ margin:'2px 0 0', fontSize:10, color:'#64748b' }}>{l}</p>
                     </div>
                   ))}
                 </div>
-                {/* Tickets */}
-                {active.tickets.length > 0 && (
+                {active.tickets.length>0 && (
                   <div>
-                    <p style={{ fontSize:'10px', fontWeight:600, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.08em', margin:'0 0 8px' }}>Tickets ({active.tickets.length})</p>
-                    <div style={{ display:'flex', flexDirection:'column', gap:'6px' }}>
-                      {active.tickets.map(t => (
-                        <div key={t.id} className="ticket-row" style={{ display:'flex', alignItems:'flex-start', gap:'8px', padding:'8px', borderRadius:'8px', background:'#f8fafc', border:'1px solid #f1f5f9' }}>
+                    <p style={{ margin:'0 0 8px', fontSize:10, fontWeight:600, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.08em' }}>Tickets ({active.tickets.length})</p>
+                    <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
+                      {active.tickets.map(t=>(
+                        <div key={t.id} style={{ display:'flex', alignItems:'flex-start', gap:8, padding:8, borderRadius:8, background:'#f8fafc', border:'1px solid #f1f5f9' }}>
                           <div style={{ flex:1, minWidth:0 }}>
-                            <div style={{ display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap' }}>
-                              <span style={{ fontSize:'10px', fontFamily:'JetBrains Mono,monospace', color:'#94a3b8' }}>{t.id}</span>
-                              <TicketTypePill type={t.type} />
+                            <div style={{ display:'flex', alignItems:'center', gap:6, flexWrap:'wrap' }}>
+                              <span style={{ fontSize:10, fontFamily:'JetBrains Mono,monospace', color:'#94a3b8' }}>{t.id}</span>
+                              <TypePill type={t.type}/>
                             </div>
-                            <p style={{ fontSize:'11px', color:'#334155', margin:'3px 0 0', lineHeight:1.4 }}>{t.title}</p>
-                            <p style={{ fontSize:'10px', color:'#94a3b8', margin:'2px 0 0' }}>{t.assignee}</p>
+                            <p style={{ margin:'3px 0 0', fontSize:11, color:'#334155', lineHeight:1.4 }}>{t.title}</p>
+                            <p style={{ margin:'2px 0 0', fontSize:10, color:'#94a3b8' }}>{t.assignee}</p>
                           </div>
-                          <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'4px', flexShrink:0 }}>
-                            <TicketStatusPill status={t.status} />
-                            <span style={{ fontSize:'10px', fontFamily:'JetBrains Mono,monospace', color:'#64748b' }}>{t.storyPoints}p</span>
+                          <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:4, flexShrink:0 }}>
+                            <StatusPill status={t.status}/>
+                            <span style={{ fontSize:10, fontFamily:'JetBrains Mono,monospace', color:'#64748b' }}>{t.storyPoints}p</span>
                           </div>
                         </div>
                       ))}
@@ -975,111 +880,107 @@ function SprintMetricsPage() {
                 )}
               </div>
             ) : (
-              <div style={{ padding:'32px', textAlign:'center', color:'#94a3b8', fontSize:'13px' }}>No active sprint</div>
+              <div style={{ padding:32, textAlign:'center', color:'#94a3b8', fontSize:13 }}>No active sprint</div>
             )}
           </div>
         </div>
 
-        {/* Sprint History Table */}
-        <div style={{ background:'white', borderRadius:'12px', border:'1px solid #e2e8f0', overflow:'hidden', boxShadow:'0 1px 3px rgba(0,0,0,0.08)' }}>
-          <div style={{ padding:'16px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+        {/* Sprint history */}
+        <div style={{ background:'white', borderRadius:12, border:'1px solid #e2e8f0', overflow:'hidden', boxShadow:'0 1px 3px rgba(0,0,0,0.08)' }}>
+          <div style={{ padding:'14px 24px', borderBottom:'1px solid #f1f5f9', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
             <div>
-              <h3 style={{ fontSize:'13px', fontWeight:600, color:'#1e293b', margin:0 }}>Sprint History</h3>
-              <p style={{ fontSize:'12px', color:'#94a3b8', margin:'2px 0 0' }}>{selectedTeam} team · {sprints.length} sprints · Jan 5 – Jul 3, 2026</p>
+              <h3 style={{ margin:0, fontSize:13, fontWeight:600, color:'#1e293b' }}>Sprint History</h3>
+              <p style={{ margin:'2px 0 0', fontSize:12, color:'#94a3b8' }}>{team} team · {sprints.length} sprints · Jan 5 – Jul 3, 2026</p>
             </div>
-            <span style={{ fontSize:'11px', color:'#94a3b8' }}>Click row to see tickets</span>
+            <span style={{ fontSize:11, color:'#94a3b8' }}>Click row to expand tickets</span>
           </div>
           <table className="data-table">
             <thead>
               <tr>
                 <th style={{ width:'12%' }}>Sprint</th>
-                <th style={{ width:'30%' }}>Goal</th>
-                <th style={{ width:'13%' }}>Dates</th>
-                <th style={{ width:'8%' }}>Planned</th>
-                <th style={{ width:'8%' }}>Done</th>
+                <th style={{ width:'31%' }}>Goal</th>
+                <th style={{ width:'12%' }}>Dates</th>
+                <th style={{ width:'7%'  }}>Planned</th>
+                <th style={{ width:'7%'  }}>Done</th>
                 <th style={{ width:'11%' }}>Velocity</th>
-                <th style={{ width:'6%' }}>Bugs</th>
-                <th style={{ width:'6%' }}>Blocked</th>
-                <th style={{ width:'6%' }}>Status</th>
+                <th style={{ width:'6%'  }}>Bugs</th>
+                <th style={{ width:'6%'  }}>Blocked</th>
+                <th style={{ width:'8%'  }}>Status</th>
               </tr>
             </thead>
             <tbody>
-              {[...sprints].reverse().map(sprint => {
-                const sel = selectedSprintId === sprint.id;
-                const v = sprint.velocity;
-                const vColor = v>=80?'#16a34a':v>=60?'#d97706':'#dc2626';
+              {[...sprints].reverse().map(s => {
+                const sel = selSprint === s.id;
+                const vc2 = s.velocity>=80?'#16a34a':s.velocity>=60?'#d97706':'#dc2626';
                 return (
-                  <React.Fragment key={sprint.id}>
-                    <tr onClick={() => setSelectedSprintId(sel ? null : sprint.id)} style={{ cursor:'pointer', background: sel?'#f0f4ff':'' }}>
+                  <React.Fragment key={s.id}>
+                    <tr className={sel?'row-selected':''} onClick={()=>setSelSprint(sel?null:s.id)}>
                       <td>
-                        <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
-                          <ChevronRightIcon size={12} cls={sel?'rotate-90':''} />
-                          <span style={{ fontSize:'12px', fontWeight:600, fontFamily:'JetBrains Mono,monospace', color:'#334155' }}>{sprint.id}</span>
+                        <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                          <span style={{ display:'inline-block', transition:'transform 200ms', transform:sel?'rotate(90deg)':'' }}><ChevIco size={11} cls="text-slate-400"/></span>
+                          <span style={{ fontSize:12, fontWeight:600, fontFamily:'JetBrains Mono,monospace', color:'#334155' }}>{s.id}</span>
                         </div>
-                        {sprint.status === 'Active' && (
-                          <div style={{ display:'flex', alignItems:'center', gap:'4px', marginLeft:'18px', marginTop:'2px' }}>
-                            <ZapIcon size={10} cls="text-indigo-500" />
-                            <span style={{ fontSize:'10px', fontWeight:600, color:'#4f46e5' }}>Active</span>
+                        {s.status==='Active' && (
+                          <div style={{ display:'flex', alignItems:'center', gap:3, marginLeft:17, marginTop:2 }}>
+                            <ZapIco size={10} cls="text-indigo-500"/>
+                            <span style={{ fontSize:10, fontWeight:600, color:'#4f46e5' }}>Active</span>
                           </div>
                         )}
                       </td>
-                      <td><p style={{ fontSize:'12px', color:'#475569', margin:0, lineHeight:1.4, display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>{sprint.goal}</p></td>
-                      <td><p style={{ fontSize:'11px', color:'#475569', margin:0, fontVariantNumeric:'tabular-nums' }}>{fmtDate(sprint.startDate)} –<br/>{fmtDate(sprint.endDate)}</p></td>
-                      <td><span style={{ fontSize:'12px', fontWeight:700, fontFamily:'JetBrains Mono,monospace', color:'#334155' }}>{sprint.plannedPoints}</span></td>
+                      <td><p style={{ margin:0, fontSize:12, color:'#475569', lineHeight:1.4, display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>{s.goal}</p></td>
+                      <td><p style={{ margin:0, fontSize:11, color:'#475569' }}>{fmt(s.startDate)} –<br/>{fmt(s.endDate)}</p></td>
+                      <td><span style={{ fontSize:12, fontWeight:700, fontFamily:'JetBrains Mono,monospace', color:'#334155' }}>{s.plannedPoints}</span></td>
                       <td>
-                        <span style={{ fontSize:'12px', fontWeight:700, fontFamily:'JetBrains Mono,monospace', color:'#334155' }}>{sprint.completedPoints}</span>
-                        {sprint.carriedOver > 0 && <p style={{ fontSize:'10px', color:'#f97316', margin:'2px 0 0' }}>+{sprint.carriedOver} CO</p>}
+                        <span style={{ fontSize:12, fontWeight:700, fontFamily:'JetBrains Mono,monospace', color:'#334155' }}>{s.completedPoints}</span>
+                        {s.carriedOver>0 && <p style={{ margin:'2px 0 0', fontSize:10, color:'#f97316' }}>+{s.carriedOver} CO</p>}
                       </td>
                       <td>
-                        <div style={{ marginBottom:'4px' }}>
-                          <div style={{ height:'6px', borderRadius:'9999px', background:'#f1f5f9', overflow:'hidden' }}>
-                            <div style={{ height:'100%', borderRadius:'9999px', background:vColor, width:`${Math.min(100,v)}%` }} />
-                          </div>
+                        <div style={{ height:6, borderRadius:9999, background:'#f1f5f9', overflow:'hidden', marginBottom:4 }}>
+                          <div style={{ height:'100%', borderRadius:9999, background:vc2, width:`${Math.min(100,s.velocity)}%` }}/>
                         </div>
-                        <span style={{ fontSize:'12px', fontWeight:700, color:vColor, fontVariantNumeric:'tabular-nums' }}>{v}%</span>
+                        <span style={{ fontSize:12, fontWeight:700, color:vc2 }}>{s.velocity}%</span>
                       </td>
-                      <td><span style={{ fontSize:'12px', fontWeight:600, color: sprint.bugsFound>5?'#dc2626':sprint.bugsFound>2?'#f97316':'#475569' }}>{sprint.bugsFound}</span></td>
-                      <td><span style={{ fontSize:'12px', fontWeight:600, color: sprint.blockedCount>3?'#dc2626':sprint.blockedCount>0?'#f97316':'#94a3b8' }}>{sprint.blockedCount}</span></td>
+                      <td><span style={{ fontSize:12, fontWeight:600, color:s.bugsFound>5?'#dc2626':s.bugsFound>2?'#f97316':'#475569' }}>{s.bugsFound}</span></td>
+                      <td><span style={{ fontSize:12, fontWeight:600, color:s.blockedCount>3?'#dc2626':s.blockedCount>0?'#f97316':'#94a3b8' }}>{s.blockedCount}</span></td>
                       <td>
-                        {sprint.status==='Completed' ? <CheckCircle2Icon size={16} cls="text-emerald-500" /> :
-                         sprint.status==='Active'    ? <div className="spinner" /> :
-                                                       <ClockIcon size={16} cls="text-slate-300" />}
+                        {s.status==='Completed' ? <CheckIco size={16} cls="text-emerald-500"/> :
+                         s.status==='Active'    ? <span className="spinner"/> :
+                                                  <ClockIco size={16} cls="text-slate-300"/>}
                       </td>
                     </tr>
                     {sel && (
                       <tr>
                         <td colSpan={9} style={{ padding:0 }}>
-                          <div style={{ margin:'0 16px 12px', borderRadius:'10px', border:'1px solid #e2e8f0', overflow:'hidden' }}>
-                            <div style={{ padding:'8px 16px', background:'#f8fafc', borderBottom:'1px solid #e2e8f0', display:'flex', alignItems:'center', gap:'8px' }}>
-                              <span style={{ fontSize:'11px', fontWeight:600, color:'#475569' }}>Sprint Tickets — {sprint.name}</span>
-                              <span style={{ fontSize:'10px', color:'#94a3b8' }}>({sprint.tickets.length} tickets)</span>
+                          <div style={{ margin:'0 16px 10px', borderRadius:10, border:'1px solid #e2e8f0', overflow:'hidden' }}>
+                            <div style={{ padding:'8px 16px', background:'#f8fafc', borderBottom:'1px solid #e2e8f0', display:'flex', alignItems:'center', gap:8 }}>
+                              <span style={{ fontSize:11, fontWeight:600, color:'#475569' }}>Tickets — {s.name}</span>
+                              <span style={{ fontSize:10, color:'#94a3b8' }}>({s.tickets.length})</span>
                             </div>
-                            {sprint.tickets.length > 0 ? (
+                            {s.tickets.length>0 ? (
                               <table style={{ width:'100%', borderCollapse:'collapse' }}>
                                 <thead>
                                   <tr style={{ background:'#f8fafc' }}>
-                                    {['ID','Title','Type','Pts','Assignee','Status'].map(h => (
-                                      <th key={h} style={{ fontSize:'10px', fontWeight:600, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.05em', padding:'8px 16px', textAlign:'left', borderBottom:'1px solid #e2e8f0' }}>{h}</th>
+                                    {['ID','Title','Type','Pts','Assignee','Status'].map(h=>(
+                                      <th key={h} style={{ fontSize:10, fontWeight:600, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.05em', padding:'8px 16px', textAlign:'left', borderBottom:'1px solid #e2e8f0' }}>{h}</th>
                                     ))}
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {sprint.tickets.map(t => (
-                                    <tr key={t.id} className="ticket-row" style={{ borderBottom:'1px solid #f1f5f9' }}>
-                                      <td style={{ padding:'8px 16px', fontSize:'10px', fontFamily:'JetBrains Mono,monospace', color:'#94a3b8' }}>{t.id}</td>
-                                      <td style={{ padding:'8px 16px', fontSize:'11px', color:'#334155' }}>{t.title}</td>
-                                      <td style={{ padding:'8px 16px' }}><TicketTypePill type={t.type} /></td>
-                                      <td style={{ padding:'8px 16px', fontSize:'11px', fontWeight:600, fontFamily:'JetBrains Mono,monospace', color:'#334155' }}>{t.storyPoints}</td>
-                                      <td style={{ padding:'8px 16px', fontSize:'11px', color:'#475569' }}>{t.assignee}</td>
-                                      <td style={{ padding:'8px 16px' }}><TicketStatusPill status={t.status} /></td>
+                                  {s.tickets.map(t=>(
+                                    <tr key={t.id} style={{ borderBottom:'1px solid #f1f5f9' }}>
+                                      <td style={{ padding:'8px 16px', fontSize:10, fontFamily:'JetBrains Mono,monospace', color:'#94a3b8' }}>{t.id}</td>
+                                      <td style={{ padding:'8px 16px', fontSize:11, color:'#334155' }}>{t.title}</td>
+                                      <td style={{ padding:'8px 16px' }}><TypePill type={t.type}/></td>
+                                      <td style={{ padding:'8px 16px', fontSize:11, fontWeight:600, fontFamily:'JetBrains Mono,monospace', color:'#334155' }}>{t.storyPoints}</td>
+                                      <td style={{ padding:'8px 16px', fontSize:11, color:'#475569' }}>{t.assignee}</td>
+                                      <td style={{ padding:'8px 16px' }}><StatusPill status={t.status}/></td>
                                     </tr>
                                   ))}
                                 </tbody>
                               </table>
                             ) : (
-                              <div style={{ padding:'20px', textAlign:'center', fontSize:'12px', color:'#94a3b8' }}>
-                                No ticket data available for this sprint in the standalone demo.<br/>
-                                <span style={{ fontSize:'11px' }}>Ticket data is loaded for the 3 most recent sprints (11–13) per team.</span>
+                              <div style={{ padding:'20px 16px', fontSize:12, color:'#94a3b8', textAlign:'center' }}>
+                                Ticket detail available for Sprints 11–13. Select a recent sprint to view tickets.
                               </div>
                             )}
                           </div>
@@ -1097,22 +998,33 @@ function SprintMetricsPage() {
   );
 }
 
-// ─── App + Router ─────────────────────────────────────────────────────────────
+// ─── App root (no external router — pure React state navigation) ───────────────
 function App() {
+  const [page, setPage] = useState('releases');
+  const [sprintTeam, setSprintTeam] = useState(null);
+
+  const navigate = useCallback((target, team = null) => {
+    if (target === 'releases' || target === '/') {
+      setPage('releases');
+    } else {
+      setPage('sprints');
+      if (team) setSprintTeam(team);
+    }
+  }, []);
+
   return (
-    <HashRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<FeatureReleasePage />} />
-          <Route path="sprints" element={<SprintMetricsPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
-      </Routes>
-    </HashRouter>
+    <NavCtx.Provider value={{ page, sprintTeam, navigate }}>
+      <div style={{ display:'flex', minHeight:'100vh', background:'#f8fafc' }}>
+        <Sidebar/>
+        <main style={{ flex:1, overflow:'auto' }}>
+          {page === 'releases' ? <FeatureReleasePage/> : <SprintMetricsPage/>}
+        </main>
+      </div>
+    </NavCtx.Provider>
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
 </body>
 </html>
