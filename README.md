@@ -120,7 +120,19 @@ src/
 
 ---
 
-## Getting started
+## Quick start — no install required
+
+**`pulse-dashboard.html`** is a fully self-contained single file included in this repo. It loads all dependencies (React, Recharts, Tailwind CSS, React Router) from a CDN at runtime — no Node.js, no npm, no build step.
+
+1. Download [`pulse-dashboard.html`](./pulse-dashboard.html) from this repository
+2. Open it in any modern browser (Chrome, Firefox, Safari, Edge)
+3. The full interactive dashboard loads immediately
+
+> **How it works:** The HTML file uses Babel Standalone to compile JSX in the browser, imports React 18 and Recharts via UMD CDN scripts, and uses a `HashRouter` (`#/sprints`) so navigation works from the local file system without a web server. An internet connection is required to load CDN assets.
+
+---
+
+## Full development setup
 
 ### Prerequisites
 
