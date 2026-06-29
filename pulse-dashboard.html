@@ -192,14 +192,14 @@ const HW_SPRINTS = [
   mkSprint('HW-S08','HW Sprint 8','Hardware','2026-04-13','2026-04-24','Completed',34,31,3,1,0,91,'Mass production readiness & CAN Bus hardware sign-off',['FLT-002','FLT-003']),
   mkSprint('HW-S09','HW Sprint 9','Hardware','2026-04-27','2026-05-08','Completed',36,32,4,1,0,89,'GPS field calibration & satellite failover hardware test',['FLT-002','FLT-005']),
   mkSprint('HW-S10','HW Sprint 10','Hardware','2026-05-11','2026-05-22','Completed',34,31,3,1,0,91,'DVT hardware validation & production ramp support',['FLT-002','FLT-003']),
-  mkSprint('HW-S11','HW Sprint 11','Hardware','2026-05-25','2026-06-05','Completed',32,29,3,2,0,91,'Production validation & GPS software handoff support',['FLT-002','FLT-005'],[
+  mkSprint('HW-S11','HW Sprint 11','Hardware','2026-05-25','2026-06-05','Completed',32,29,3,0,0,91,'Production validation & GPS software handoff support',['FLT-002','FLT-005'],[
     tk('HW-101','Production validation test (PVT) execution','Story',13,'Done','Jennifer Park','FLT-002'),
     tk('HW-102','Satellite modem AT command set documentation','Task',5,'Done','Marcus Wong','FLT-005'),
     tk('HW-103','GPS accuracy final report — sub-meter achieved','Task',5,'Done','Sarah Chen','FLT-002'),
     tk('HW-104','Hardware SW interface spec handoff to Software team','Task',5,'Done','James Liu','FLT-002'),
     tk('HW-105','CAN bus ECU compatibility matrix update','Task',4,'In Progress','Alex Kim','FLT-003'),
   ]),
-  mkSprint('HW-S12','HW Sprint 12','Hardware','2026-06-08','2026-06-19','Completed',30,26,4,2,1,87,'Production release closure & SW integration support',['FLT-002','FLT-003'],[
+  mkSprint('HW-S12','HW Sprint 12','Hardware','2026-06-08','2026-06-19','Completed',30,26,4,1,1,87,'Production release closure & SW integration support',['FLT-002','FLT-003'],[
     tk('HW-111','GPS software integration test support','Task',5,'Done','Sarah Chen','FLT-002'),
     tk('HW-112','Production hardware release documentation','Task',5,'Done','Jennifer Park','FLT-002'),
     tk('HW-113','Satellite modem firmware flash validation','Task',5,'Done','Marcus Wong','FLT-005'),
@@ -227,14 +227,14 @@ const SW_SPRINTS = [
   mkSprint('SW-S08','SW Sprint 8','Software','2026-04-13','2026-04-24','Completed',38,29,9,4,2,76,'Connection manager core & driver analytics MVP',['FLT-004','FLT-005']),
   mkSprint('SW-S09','SW Sprint 9','Software','2026-04-27','2026-05-08','Completed',40,33,7,3,1,83,'Failover integration tests & driver analytics backend',['FLT-004','FLT-005']),
   mkSprint('SW-S10','SW Sprint 10','Software','2026-05-11','2026-05-22','Completed',40,35,5,3,1,88,'Driver analytics UI & failover reliability hardening',['FLT-004','FLT-005']),
-  mkSprint('SW-S11','SW Sprint 11','Software','2026-05-25','2026-06-05','Completed',40,27,13,7,3,68,'Cellular failover edge cases — complexity spike resurfaces',['FLT-004','FLT-005'],[
+  mkSprint('SW-S11','SW Sprint 11','Software','2026-05-25','2026-06-05','Completed',40,27,13,2,3,68,'Cellular failover edge cases — complexity spike resurfaces',['FLT-004','FLT-005'],[
     tk('SW-101','Failover state machine race condition fix (3 bugs)','Bug',13,'In Progress','David Martinez','FLT-005'),
     tk('SW-102','Roaming SIM card APN auto-configuration','Story',8,'Blocked','Priya Patel','FLT-005'),
     tk('SW-103','Driver analytics PDF export','Story',8,'Done','Lisa Wang','FLT-004'),
     tk('SW-104','CAN gateway timeout handling','Bug',5,'Done','Tom Johnson','FLT-003'),
     tk('SW-105','Iridium SBD credit balance monitoring','Task',6,'Blocked','David Martinez','FLT-005'),
   ]),
-  mkSprint('SW-S12','SW Sprint 12','Software','2026-06-08','2026-06-19','Completed',40,25,15,6,4,63,'Cellular failover end-to-end — blocked on APN regression',['FLT-004','FLT-005'],[
+  mkSprint('SW-S12','SW Sprint 12','Software','2026-06-08','2026-06-19','Completed',40,25,15,1,4,63,'Cellular failover end-to-end — blocked on APN regression',['FLT-004','FLT-005'],[
     tk('SW-111','APN auto-configuration regression fix','Bug',8,'In Progress','Priya Patel','FLT-005'),
     tk('SW-112','End-to-end failover QA test environment setup','Task',5,'Done','Tom Johnson','FLT-005'),
     tk('SW-113','Driver analytics coaching alerts push notification','Story',8,'Done','Lisa Wang','FLT-004'),
@@ -242,7 +242,7 @@ const SW_SPRINTS = [
     tk('SW-115','Failover event telemetry to Datadog','Task',5,'Done','Tom Johnson','FLT-005'),
     tk('SW-116','Connection manager stress test (72h soak)','Task',6,'Blocked','David Martinez','FLT-005'),
   ]),
-  mkSprint('SW-S13','SW Sprint 13','Software','2026-06-22','2026-07-03','Active',38,14,0,3,2,37,'CRITICAL: Cellular failover delivery sprint (Jun 30 deadline)',['FLT-005'],[
+  mkSprint('SW-S13','SW Sprint 13','Software','2026-06-22','2026-07-03','Active',38,14,0,1,2,37,'CRITICAL: Cellular failover delivery sprint (Jun 30 deadline)',['FLT-005'],[
     tk('SW-121','APN regression root cause fix + regression suite','Bug',13,'In Progress','Priya Patel','FLT-005'),
     tk('SW-122','Cellular dead zone detection final implementation','Story',8,'Blocked','David Martinez','FLT-005'),
     tk('SW-123','Failover connection manager v2 — final integration','Story',8,'In Progress','Tom Johnson','FLT-005'),
@@ -262,21 +262,21 @@ const QA_SPRINTS = [
   mkSprint('QA-S08','QA Sprint 8','Quality','2026-04-13','2026-04-24','Completed',34,30,4,2,0,88,'GPS DVT sign-off & CAN bus compliance validation',['FLT-002','FLT-003']),
   mkSprint('QA-S09','QA Sprint 9','Quality','2026-04-27','2026-05-08','Completed',32,29,3,2,0,91,'Driver analytics test plan & cellular failover scoping',['FLT-004','FLT-005']),
   mkSprint('QA-S10','QA Sprint 10','Quality','2026-05-11','2026-05-22','Completed',34,30,4,3,0,88,'Driver analytics full test execution & failover test plan',['FLT-004','FLT-005']),
-  mkSprint('QA-S11','QA Sprint 11','Quality','2026-05-25','2026-06-05','Completed',34,30,4,3,1,88,'Cellular failover testing & driver analytics pre-release',['FLT-004','FLT-005'],[
+  mkSprint('QA-S11','QA Sprint 11','Quality','2026-05-25','2026-06-05','Completed',34,30,4,0,1,88,'Cellular failover testing & driver analytics pre-release',['FLT-004','FLT-005'],[
     tk('QA-101','LTE → Satellite failover test execution (15 scenarios)','Story',13,'Done','Emily Chen','FLT-005'),
     tk('QA-102','Driver analytics pre-release acceptance sign-off','Task',8,'Done','Rachel Green','FLT-004'),
     tk('QA-103','Failover latency measurement across carriers','Task',5,'Done','Kevin Brown','FLT-005'),
     tk('QA-104','Push notification accuracy test (100 alerts)','Task',4,'Done','Rachel Green','FLT-004'),
     tk('QA-105','Cellular failover regression on LTE network drop','Story',4,'Blocked','Emily Chen','FLT-005'),
   ]),
-  mkSprint('QA-S12','QA Sprint 12','Quality','2026-06-08','2026-06-19','Completed',34,23,11,5,3,68,'Lab contention: driver analytics vs cellular failover testing',['FLT-004','FLT-005'],[
+  mkSprint('QA-S12','QA Sprint 12','Quality','2026-06-08','2026-06-19','Completed',34,23,11,1,3,68,'Lab contention: driver analytics vs cellular failover testing',['FLT-004','FLT-005'],[
     tk('QA-111','Cellular failover 72h soak test (lab occupied)','Story',13,'Blocked','Emily Chen','FLT-005'),
     tk('QA-112','Driver analytics coaching alert regression','Task',5,'Done','Rachel Green','FLT-004'),
     tk('QA-113','Cellular APN regression test (SW team bug)','Bug',8,'Blocked','Kevin Brown','FLT-005'),
     tk('QA-114','Driver analytics load test — 10K concurrent users','Task',5,'Done','Rachel Green','FLT-004'),
     tk('QA-115','Device lab scheduler conflict resolution','Task',3,'Done','Emily Chen','FLT-005'),
   ]),
-  mkSprint('QA-S13','QA Sprint 13','Quality','2026-06-22','2026-07-03','Active',32,10,0,2,2,31,'Cellular failover end-to-end & driver analytics final QA',['FLT-004','FLT-005'],[
+  mkSprint('QA-S13','QA Sprint 13','Quality','2026-06-22','2026-07-03','Active',32,10,0,0,2,31,'Cellular failover end-to-end & driver analytics final QA',['FLT-004','FLT-005'],[
     tk('QA-121','Cellular failover end-to-end test (all 35 scenarios)','Story',13,'Blocked','Emily Chen','FLT-005'),
     tk('QA-122','GPS accuracy regression test (post SW handoff)','Task',5,'Done','Kevin Brown','FLT-002'),
     tk('QA-123','OTA stress test on cellular failover firmware','Story',8,'Blocked','Rachel Green','FLT-005'),
