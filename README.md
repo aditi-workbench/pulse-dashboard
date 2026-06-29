@@ -2,6 +2,8 @@
 
 > Real-time visibility into feature release health, team sprint velocity, and delivery risk for engineering teams.
 
+**[Open the live dashboard →](https://aditi-workbench.github.io/pulse-dashboard/)**
+
 PULSE is an interactive engineering dashboard built for **FleetVision Technologies**, a telematics company with three engineering teams — **Hardware**, **Software**, and **Quality**. It surfaces the health of active feature releases and provides deep-dive sprint metrics sourced from JIRA, so engineering leaders can quickly identify which teams are putting a committed delivery date at risk and take action.
 
 ---
